@@ -21,8 +21,8 @@ function spawn() {
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
     r: 5,
-    dx: Math.random(),
-    dy: Math.random()
+    dx: Math.random()/5,
+    dy: Math.random()/5
   }
 
   objects.push(object);
@@ -36,11 +36,8 @@ function animate() {
     spawn();
   }
 
-  //  calculate bounds of player obj here
-  let playerLeft = pX;
-  let playerRight = pX+pR;
-  let playerTop = pY;
-  let playerBot = pY+pR;
+  //  calculate bounds of player obj
+  let player = { r: pR, x: pX, y: pY };
 
   //animate code ends here
   for(let i = 0; i < objects.length; i++) {
@@ -55,15 +52,14 @@ function animate() {
 
     //collision code starts here
     //  calculate bounds of last spawned ball
-    let top = o.y - o.r;
-    let bot = o.y + o.r;
-    let left = o.x - o.r;
-    let right = o.x + o.r;
+    let distance = Math.sqrt((o.x - player.x) * (o.x - player.x) + (o.y - player.y) * (o.y - player.y))
 
-    if(top === playerBot || bot === playerTop || left === playerRight || right === playerLeft){
+    if(distance < player.r + o.r){
       // playerHit();
+      o.dx = -o.dx;
+      o.dy = -o.dy;
       console.log('hit') //function to decrease player life
-    };//end of collision code, not sure if it works :P
+    };//end of collision code
 
 
     //direction on spawn
@@ -98,4 +94,4 @@ function draw(){
 
 };
 
-setInterval(draw, 15);
+setInterval(draw, 1);
