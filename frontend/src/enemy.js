@@ -4,11 +4,6 @@
 let spawnRate = 3000;
 let lastSpawn = -10;
 let objects = [];
-let ballRadius = 10;
-let x = canvas.width/2;
-let y = canvas.height-50;
-let dx = 2;
-let dy = -2;
 
 //spawn code starts here
 
@@ -31,7 +26,7 @@ function spawn() {
   }
 
   objects.push(object);
-};
+}; //spawn code ends here
 
 function animate() {
   let time = Date.now();
@@ -46,9 +41,10 @@ function animate() {
   // let playerTop = playerY;
   // let playerBot = playerY+playerHeight;
 
+  //animate code ends here
   for(let i = 0; i < objects.length; i++) {
 
-    let o = objects[i]; //rng location at spawn
+    let o = objects[i];
     ctx.beginPath();
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
     ctx.fillStyle = o.type;
@@ -70,37 +66,25 @@ function animate() {
       o.dy = -o.dy;
     };
 
-    //bounce off top and bottom
+    //bounce code starts here
     //if y val of ball pos is < 0 or greater than canvas height, reverse direction
     if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
       o.dy = -o.dy;
     };
-    //bounce off left and right
+
     if (o.x + o.dx < 0 || o.x + o.dx > canvas.width) {
       o.dx = -o.dx;
-    };
+    };//bounce code ends here
 
     o.x += o.dx;
     o.y += o.dy;
   }
 
+};//animate code ends here
 
-
-};
-
-
-
-function drawBall(){
-  ctx.beginPath();
-  ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-  ctx.fillStyle = "green";
-  ctx.fill();
-  ctx.closePath();
-};
 
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // drawBall();
   animate()
 
 };
