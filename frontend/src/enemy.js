@@ -21,8 +21,8 @@ function spawn() {
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
     r: 5,
-    dx: Math.random()/5,
-    dy: Math.random()/5
+    dx: Math.random(),
+    dy: Math.random()
   }
 
   objects.push(object);
@@ -51,8 +51,10 @@ function animate() {
     ctx.closePath();
 
     //collision code starts here
-    //  calculate bounds of last spawned ball
-    let distance = Math.sqrt((o.x - player.x) * (o.x - player.x) + (o.y - player.y) * (o.y - player.y))
+    // find distance between midpoints
+    let dx = o.x - player.x;
+    let dy = o.y - player.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
 
     if(distance < player.r + o.r){
       // playerHit();
@@ -91,7 +93,9 @@ function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   animate();
   drawPlayer();
-
+  window.requestAnimationFrame(draw);
 };
 
-setInterval(draw, 1);
+// let interval = setInterval(draw, 10);
+
+window.requestAnimationFrame(draw);
