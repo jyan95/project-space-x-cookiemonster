@@ -1,7 +1,7 @@
 /******************************************************************************
 * enemy canvas element
 ******************************************************************************/
-let spawnRate = 3000;
+let spawnRate = 2500;
 let lastSpawn = -10;
 let objects = [];
 
@@ -37,10 +37,10 @@ function animate() {
   }
 
   //  calculate bounds of player obj here
-  let playerLeft = playerX;
-  let playerRight = playerX+playerWidth;
-  let playerTop = playerY;
-  let playerBot = playerY+playerHeight;
+  // let playerLeft = playerX;
+  // let playerRight = playerX+playerWidth;
+  // let playerTop = playerY;
+  // let playerBot = playerY+playerHeight;
 
   //animate code ends here
   for(let i = 0; i < objects.length; i++) {
@@ -60,9 +60,9 @@ function animate() {
     let left = o.x - o.r;
     let right = o.x + o.r;
 
-    if(top === playerBot || bot === playerTop || left === playerRight || right === playerLeft){
-      playerHit(); //function to decrease player life
-    };//end of collision code, not sure if it works :P
+    // if(top === playerBot || bot === playerTop || left === playerRight || right === playerLeft){
+    //   playerHit(); //function to decrease player life
+    // };//end of collision code, not sure if it works :P
 
 
     //direction on spawn
