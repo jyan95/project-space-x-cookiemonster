@@ -27,8 +27,8 @@ function renderLives(){
 };
 
 function playerHit(){
-  // lifeArr.pop();
-  // renderLives(lifeArr);
+  lifeArr.pop();
+  renderLives(lifeArr);
 };
 
 function gameOver(){

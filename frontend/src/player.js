@@ -22,7 +22,7 @@ function doKeyDown(e){
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   onkeydown = onkeyup = function(e){
     direction[e.keyCode] = e.type == 'keydown';
-    console.log(direction)
+    // console.log(direction):
     /* insert conditional here */
     //Up and left
     if (direction[38] && direction[37]) {

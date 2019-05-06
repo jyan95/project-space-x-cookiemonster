@@ -21,12 +21,38 @@ function spawn() {
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
     r: 5,
-    dx: Math.random(),
-    dy: Math.random()
+    dx: Math.random()+1,
+    dy: Math.random()+1,
+    cooldown: false //for use in collision detection
   }
 
   objects.push(object);
 }; //spawn code ends here
+
+//if enemy obj is within player obj
+function respawn(o, player){
+  o.x = Math.random() * (canvas.width - 30) + 15;
+  o.y = Math.random() * (canvas.height - 50) + 25
+};
+
+function bounceLogic(o){
+  if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
+    o.dy = -o.dy;
+  };
+
+  if (o.x + o.dx < 0 || o.x + o.dx > canvas.width) {
+    o.dx = -o.dx;
+  };
+};
+
+function cooldownLogic(o){
+  if (o.cooldown === false ) {
+    console.log('HIT');
+    // playerHit(); //function to decrease player life
+    o.cooldown = true
+    setTimeout(()=> o.cooldown === false, 500);
+  };
+};
 
 //animate code starts here
 function animate() {
@@ -39,12 +65,10 @@ function animate() {
   //  calculate bounds of player obj
   let player = { r: pR, x: pX, y: pY };
 
-  //animate code ends here
   for(let i = 0; i < objects.length; i++) {
 
     let o = objects[i];
     ctx.beginPath();
-    //need to build conditional to prvent spawn on player obj here(?0)
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
     ctx.fillStyle = o.type;
     ctx.fill();
@@ -56,13 +80,13 @@ function animate() {
     let dy = o.y - player.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(distance < player.r + o.r){
-      // playerHit();
+    if(distance <= player.r + o.r){
+      respawn(o);
+      cooldownLogic(o); //invulnerability timer
       o.dx = -o.dx;
       o.dy = -o.dy;
-      console.log('hit') //function to decrease player life
+      // console.log('hit');
     };//end of collision code
-
 
     //direction on spawn
     if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r){
@@ -73,14 +97,7 @@ function animate() {
       o.dy = -o.dy;
     };
 
-    //bounce code starts here
-    if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
-      o.dy = -o.dy;
-    };
-
-    if (o.x + o.dx < 0 || o.x + o.dx > canvas.width) {
-      o.dx = -o.dx;
-    };
+    bounceLogic(o);
 
     o.x += o.dx;
     o.y += o.dy;
