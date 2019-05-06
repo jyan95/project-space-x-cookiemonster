@@ -31,6 +31,10 @@ function playerHit(){
   renderLives(lifeArr);
 };
 
+function increaseScore(){
+  console.log('++');
+};
+
 function gameOver(){
 
 };

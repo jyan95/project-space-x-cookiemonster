@@ -1,13 +1,12 @@
 /******************************************************************************
 * enemy canvas element
 ******************************************************************************/
-let spawnRate = 2500;
-let lastSpawn = -10;
-let objects = [];
+let enemySpawnRate = 2500;
+let enemyLastSpawn = -10;
+let enemies = [];
 
 //spawn code starts here
-
-function spawn() {
+function spawnEnemy() {
   let t;
 
   if (Math.random() < 0.5) {
@@ -26,10 +25,10 @@ function spawn() {
     cooldown: false //for use in collision detection
   }
 
-  objects.push(object);
+  enemies.push(object);
 }; //spawn code ends here
 
-//if enemy obj is within player obj
+//to prevent objects from getting stuck
 function respawn(o, player){
   o.x = Math.random() * (canvas.width - 30) + 15;
   o.y = Math.random() * (canvas.height - 50) + 25
@@ -54,20 +53,11 @@ function cooldownLogic(o){
   };
 };
 
-//animate code starts here
-function animate() {
-  let time = Date.now();
-  if (time > (lastSpawn + spawnRate)) {
-    lastSpawn = time;
-    spawn();
-  }
+//draw enemy loop for animate function
+function enemyLoop(player) {
+  for(let i = 0; i < enemies.length; i++) {
 
-  //  calculate bounds of player obj
-  let player = { r: pR, x: pX, y: pY };
-
-  for(let i = 0; i < objects.length; i++) {
-
-    let o = objects[i];
+    let o = enemies[i];
     ctx.beginPath();
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
     ctx.fillStyle = o.type;
@@ -92,18 +82,38 @@ function animate() {
     if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r){
       o.dx = -o.dx;
     };
-
     if (o.y + o.dy > canvas.height-o.r || o.y + o.dy < o.r) {
       o.dy = -o.dy;
     };
 
     bounceLogic(o);
-
     o.x += o.dx;
     o.y += o.dy;
   }
+};//enemy obj loop ends
 
-};//animate code ends here
+
+//animate code starts here
+function animate() {
+  let time = Date.now();
+  if (time > (enemyLastSpawn + enemySpawnRate)) {
+    enemyLastSpawn = time;
+    spawnEnemy();
+  }
+
+  if (time > (cookieLastSpawn + cookieSpawnRate)) {
+    cookieLastSpawn = time;
+    spawnCookie();
+  }
+
+  let player = { r: pR, x: pX, y: pY };
+
+  enemyLoop(player);
+  cookieLoop(player);
+
+
+
+};//animate code end
 
 
 function draw(){
