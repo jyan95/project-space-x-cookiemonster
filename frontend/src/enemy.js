@@ -1,14 +1,9 @@
 /******************************************************************************
 * enemy canvas element
 ******************************************************************************/
-let spawnRate = 3000;
+let spawnRate = 2500;
 let lastSpawn = -10;
 let objects = [];
-let ballRadius = 10;
-let x = canvas.width/2;
-let y = canvas.height-50;
-let dx = 2;
-let dy = -2;
 
 //spawn code starts here
 
@@ -31,8 +26,9 @@ function spawn() {
   }
 
   objects.push(object);
-};
+}; //spawn code ends here
 
+//animate code starts here
 function animate() {
   let time = Date.now();
   if (time > (lastSpawn + spawnRate)) {
@@ -41,15 +37,17 @@ function animate() {
   }
 
   //  calculate bounds of player obj here
-  // let playerLeft = playerX;
-  // let playerRight = playerX+playerWidth;
-  // let playerTop = playerY;
-  // let playerBot = playerY+playerHeight;
+  let playerLeft = pX;
+  let playerRight = pX+pR;
+  let playerTop = pY;
+  let playerBot = pY+pR;
 
+  //animate code ends here
   for(let i = 0; i < objects.length; i++) {
 
-    let o = objects[i]; //rng location at spawn
+    let o = objects[i];
     ctx.beginPath();
+    //need to build conditional to prvent spawn on player obj here(?0)
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
     ctx.fillStyle = o.type;
     ctx.fill();
@@ -62,6 +60,13 @@ function animate() {
     let left = o.x - o.r;
     let right = o.x + o.r;
 
+    if(top === playerBot || bot === playerTop || left === playerRight || right === playerLeft){
+      // playerHit();
+      console.log('hit') //function to decrease player life
+    };//end of collision code, not sure if it works :P
+
+
+    //direction on spawn
     if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r){
       o.dx = -o.dx;
     };
@@ -70,12 +75,11 @@ function animate() {
       o.dy = -o.dy;
     };
 
-    //bounce off top and bottom
-    //if y val of ball pos is < 0 or greater than canvas height, reverse direction
+    //bounce code starts here
     if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
       o.dy = -o.dy;
     };
-    //bounce off left and right
+
     if (o.x + o.dx < 0 || o.x + o.dx > canvas.width) {
       o.dx = -o.dx;
     };
@@ -84,24 +88,13 @@ function animate() {
     o.y += o.dy;
   }
 
+};//animate code ends here
 
-
-};
-
-
-
-function drawBall(){
-  ctx.beginPath();
-  ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-  ctx.fillStyle = "green";
-  ctx.fill();
-  ctx.closePath();
-};
 
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // drawBall();
-  animate()
+  animate();
+  drawPlayer();
 
 };
 
