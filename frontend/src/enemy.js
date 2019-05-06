@@ -28,6 +28,7 @@ function spawn() {
   objects.push(object);
 }; //spawn code ends here
 
+//animate code starts here
 function animate() {
   let time = Date.now();
   if (time > (lastSpawn + spawnRate)) {
@@ -36,16 +37,17 @@ function animate() {
   }
 
   //  calculate bounds of player obj here
-  // let playerLeft = playerX;
-  // let playerRight = playerX+playerWidth;
-  // let playerTop = playerY;
-  // let playerBot = playerY+playerHeight;
+  let playerLeft = playerX;
+  let playerRight = playerX+playerWidth;
+  let playerTop = playerY;
+  let playerBot = playerY+playerHeight;
 
   //animate code ends here
   for(let i = 0; i < objects.length; i++) {
 
     let o = objects[i];
     ctx.beginPath();
+    //need to build conditional to prvent spawn on player obj here(?0)
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
     ctx.fillStyle = o.type;
     ctx.fill();
@@ -58,6 +60,12 @@ function animate() {
     let left = o.x - o.r;
     let right = o.x + o.r;
 
+    if(top === playerBot || bot === playerTop || left === playerRight || right === playerLeft){
+      playerHit(); //function to decrease player life
+    };//end of collision code, not sure if it works :P
+
+
+    //direction on spawn
     if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r){
       o.dx = -o.dx;
     };
@@ -67,14 +75,13 @@ function animate() {
     };
 
     //bounce code starts here
-    //if y val of ball pos is < 0 or greater than canvas height, reverse direction
     if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
       o.dy = -o.dy;
     };
 
     if (o.x + o.dx < 0 || o.x + o.dx > canvas.width) {
       o.dx = -o.dx;
-    };//bounce code ends here
+    };
 
     o.x += o.dx;
     o.y += o.dy;
@@ -85,7 +92,7 @@ function animate() {
 
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  animate()
+  animate();
 
 };
 
