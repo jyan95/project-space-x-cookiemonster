@@ -1,6 +1,7 @@
 //GLOBAL canvas element variables
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const startBtn = document.getElementById('startButton')
 /******************************************************************************
 * core game logic
 ******************************************************************************/
@@ -10,6 +11,13 @@ let score;
 let timerCount = 0;
 let lifeArr;
 let cookieCount;
+
+startBtn.addEventListener('click', () => {
+  canvas.style.display = '';
+  console.log('clicked start');
+  window.requestAnimationFrame(draw);
+  startBtn.style.display = 'none';
+});
 
 function startGame(){
   window.requestAnimationFrame(draw);
@@ -374,7 +382,7 @@ function updatePosition(e) {
   // if (pX < canvas.width - pR) {
   //   pX += pDx;
   // }
-  
+
   // pacman-esque map movement
   if (pX > canvas.width + RADIUS) {
     pX = -RADIUS;
@@ -388,14 +396,8 @@ function updatePosition(e) {
   if (pY < -RADIUS) {
     pY = canvas.height + RADIUS;
   }
-
-  if (!playerMovement) {
-    playerMovement = requestAnimationFrame(function() {
-      playerMovement = null;
-      draw();
-    });
-  }
 };
 
 // *******************
-window.requestAnimationFrame(draw);
+//main game draw function
+// window.requestAnimationFrame(draw);
