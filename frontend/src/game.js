@@ -1,6 +1,7 @@
 //GLOBAL canvas element variables
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const startBtn = document.getElementById('startButton')
 /******************************************************************************
 * core game logic
 ******************************************************************************/
@@ -10,6 +11,13 @@ let score;
 let timerCount = 0;
 let lifeArr;
 let cookieCount;
+
+startBtn.addEventListener('click', () => {
+  canvas.style.display = '';
+  console.log('clicked start');
+  window.requestAnimationFrame(draw);
+  startBtn.style.display = 'none';
+});
 
 function startGame(){
   window.requestAnimationFrame(draw);
@@ -35,6 +43,9 @@ function playerHit(){
   console.log('hit');
   lifeArr.pop();
   renderLives(lifeArr);
+  if(lifeArr.length === 0){
+    gameOver();
+  }
 };
 
 function increaseScore(){
@@ -47,8 +58,13 @@ function increaseScore(){
 };
 
 function gameOver(){
+  //save score here
+  //replace canvas html(?)
 
 };
+
+//posting the username to the player database
+
 /******************************************************************************
 * player canvas element
 ******************************************************************************/
@@ -112,8 +128,8 @@ function spawnEnemy() {
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
     r: 8,
-    dx: Math.random(),
-    dy: Math.random(),
+    dx: Math.random()*2,
+    dy: Math.random()*2,
     cooldown: false //for use in collision detection
   }
 
@@ -374,7 +390,7 @@ function updatePosition(e) {
   // if (pX < canvas.width - pR) {
   //   pX += pDx;
   // }
-  
+
   // pacman-esque map movement
   if (pX > canvas.width + RADIUS) {
     pX = -RADIUS;
@@ -388,14 +404,8 @@ function updatePosition(e) {
   if (pY < -RADIUS) {
     pY = canvas.height + RADIUS;
   }
-
-  if (!playerMovement) {
-    playerMovement = requestAnimationFrame(function() {
-      playerMovement = null;
-      draw();
-    });
-  }
 };
 
 // *******************
-window.requestAnimationFrame(draw);
+//main game draw function
+// window.requestAnimationFrame(draw);

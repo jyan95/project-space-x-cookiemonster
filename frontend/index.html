@@ -1,24 +1,81 @@
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <head>
     <meta charset="utf-8" />
     <title>Rodgr Dodgr</title>
     <style>
-    	* { padding: 0; margin: 2rem; }
-    	canvas { background: #eee; display: block; margin: 0 auto; border: 1px solid black; }
+    	* { padding: 0; margin: 0; }
+    	canvas {
+        background: #eee;
+        display: block;
+        margin: 0 auto;
+        border: 1px solid black;
+        width: 100%;
+       }
     </style>
 </head>
 <body>
 
-<div class='gameWindow'>
-  <canvas id="canvas" width="680" height="460" ></canvas>
-</div>
+    <div class="row mt-5 ml-5">
+        <div class="col-md-4">
+          <div id="sidebar" class="">
+             <div class="item">
+               <h1>
+                 <i id="game-icon" class="game icon"></i>
+                 <span class="game-title">GAME</span> NAME <span class="game-title"></span>
+               </h1>
+             </div><br>
+             <p id="user-icon" class="item">
+               <form class="" action="index.html" method="post">
+                 <label for="usernameInput"></label>
+                 <input type="username" class="form-control" id="usernameInput" placeholder="Enter Username">
+                 <button type="submit" class="btn btn-success">Submit</button>
+               </form>
+             </p><br>
+               <p id="playerStats" class="">
+                 Your Stats
+               </p><br>
+               <p id="leaderboard" class="">
+                 Leaderboard
+               </p><br>
+             <div class="item" id="footer">
+               Created by <a href="https://github.com/guosamuel" target="_blank"> Samuel Guo</a> & <a href="https://github.com/jyan95" target="_blank"> Joshua Yan</a> © 2019
+             </div>
+          </div>
+        </div>
+      <div class="col-md-6">
+        <input id="startButton" class="btn btn-secondary btn-lg btn-block" type="button" value="Start">
+        <canvas id="canvas" style="display: none;" width='620' height="460" ></canvas>
+        <!-- <canvas id="gameOver" style="display: none;" width='620' height="460"></canvas> -->
+        <br>
+        <div class="card text-white bg-secondary mb-3" style="max-width: '740';">
+          <div class="card-header">
+            <h5>Instructions:</h5>
+          </div>
+          <div class="card-body">
+            <ul>
+              <p>To move the ball, use either the arrow keypad or your mouse. You may use a mix of both.</p>
+              <p>If you use the mouse, you must click within the screen box before using the mouse. To exit out of the mouse, press ESC.</p>
+              <p>Collect as many cookies as possible.</p>
+              <p>If you get hit by a ball, you lose a life.</p>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+
+      </div>
+    </div>
 
 
-<script src='./src/game.js'></script>
-<!-- <script src='./src/player.js'></script> -->
-<!-- <script src='./src/cookies.js'></script> -->
-<!-- <script src='./src/enemy.js'></script> -->
+  <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> -->
+  <script src='./src/game.js'></script>
+  <!-- <script src='./src/player.js'></script> -->
+  <!-- <script src='./src/cookies.js'></script> -->
+  <!-- <script src='./src/enemy.js'></script> -->
 
 
 </body>
