@@ -2,7 +2,7 @@
 * cookie canvas element
 ******************************************************************************/
 let cookieSpawnRate = 10000;
-let cookieLastSpawn = 100;
+let cookieLastSpawn = Date.now()+1000;
 let cookies = [];
 
 function spawnCookie() {
@@ -10,7 +10,7 @@ function spawnCookie() {
     type: 'green',
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
-    r: 2,
+    r: 3,
   }
   cookies.push(object);
 };
