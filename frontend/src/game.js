@@ -69,6 +69,19 @@ function doKeyDown(e){
 
 document.addEventListener("keydown", doKeyDown, true)
 
+// mouse keys
+let offsetLeft = canvas.offsetLeft;
+let offsetTop = canvas.offsetTop;
+console.log(offsetLeft, offsetTop)
+
+canvas.addEventListener("mousemove", mouseMoveHandler, false);
+
+function mouseMoveHandler(e) {
+  pX = e.clientX - offsetLeft - offsetTop;
+  pY = e.clientY - (2 * offsetTop);
+  // console.log(pX, pY)
+}
+
 /******************************************************************************
 * enemy canvas element
 ******************************************************************************/
@@ -230,7 +243,7 @@ function animate() {
 //main draw loop start
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  animate();
+  // animate();
   drawPlayer();
   //Up and left
   if (direction[38] && direction[37]) {
