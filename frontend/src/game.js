@@ -1,7 +1,9 @@
 //GLOBAL canvas element variables
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const startBtn = document.getElementById('startButton')
+const startBtn = document.getElementById('startButton');
+const lifebar = document.getElementById("lifebar");
+const gameOverCanvas = document.getElementById('gameOver');
 /******************************************************************************
 * core game logic
 ******************************************************************************/
@@ -9,7 +11,7 @@ let username;
 let signIn = false;
 let score;
 let timerCount = 0;
-let lifeArr;
+let lifeArr = ["+","+","+"];
 let cookieCount;
 
 startBtn.addEventListener('click', () => {
@@ -17,6 +19,7 @@ startBtn.addEventListener('click', () => {
   console.log('clicked start');
   window.requestAnimationFrame(draw);
   startBtn.style.display = 'none';
+  renderLives(lifeArr);
 });
 
 function startGame(){
@@ -32,10 +35,10 @@ function calculateScore(time, count){
   //calculate score based on time survived and objs picked up
 };
 
-function renderLives(){
-  lifebar.innerHTML = ''
+function renderLives(lifeArr){
+  lifebar.innerHTML = '';
   lifeArr.forEach(life => {
-    lifebar.innerHTML += life
+    lifebar.innerHTML += life;
   })
 };
 
@@ -52,14 +55,18 @@ function increaseScore(){
   console.log('++');
   ++cookieCount;
   if (count === 10) {
-    // lifeArr.push(life)
-    // renderLives()
+    lifeArr.push(life)
+    renderLives();
   }
 };
 
 function gameOver(){
+  console.log("GAME OVER");
   //save score here
   //replace canvas html(?)
+  canvas.style.display = 'none';
+  //need to stop the draw / request animation frame function
+  gameOverCanvas.style.display = ''
 
 };
 
@@ -154,8 +161,8 @@ function bounceLogic(o){
 
 function cooldownLogic(o){
   if (o.cooldown === false ) {
-    console.log('HIT');
-    // playerHit(); //function to decrease player life
+    // console.log('HIT');
+    playerHit(); //function to decrease player life
     o.cooldown = true
     setTimeout(()=> o.cooldown === false, 500);
   };
