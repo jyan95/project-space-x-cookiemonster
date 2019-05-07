@@ -66,6 +66,19 @@ function drawPlayer(){
   ctx.closePath();
 };
 
+//mouse control
+// let offsetLeft = canvas.offsetLeft;
+// let offsetTop = canvas.offsetTop;
+// console.log(offsetLeft, offsetTop)
+//
+//  canvas.addEventListener("mousemove", mouseMoveHandler, false);
+//
+//  function mouseMoveHandler(e) {
+//   pX = e.clientX - offsetLeft - offsetTop;
+//   pY = e.clientY - (2 * offsetTop);
+//   // console.log(pX, pY)
+// };
+
 //direction keys
 let direction = {};
 function doKeyDown(e){
@@ -361,6 +374,7 @@ function updatePosition(e) {
   // if (pX < canvas.width - pR) {
   //   pX += pDx;
   // }
+  
   // pacman-esque map movement
   if (pX > canvas.width + RADIUS) {
     pX = -RADIUS;
