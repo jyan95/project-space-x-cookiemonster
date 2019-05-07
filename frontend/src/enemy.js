@@ -90,12 +90,62 @@ function animate() {
 
 };//animate code ends here
 
-
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   animate();
   drawPlayer();
-
+  //Up and left
+  if (direction[38] && direction[37]) {
+    if (pY > pR && pX > pR) {
+      pY -= pDy;
+      pX -= pDx;
+    }
+  }
+  //Down and left
+  else if (direction[40] && direction[37]) {
+    if (pY < canvas.height - pR && pX > pR) {
+      pY += pDy;
+      pX -= pDx;
+    }
+  }
+  //Up and right
+  else if (direction[38] && direction[39]) {
+    if (pY > pR && pX < canvas.width - pR) {
+      pY -= pDy;
+      pX += pDx;
+    }
+  }
+  //Down and right
+  else if (direction[40] && direction[39]) {
+    if (pY < canvas.height - pR && pX < canvas.width - pR) {
+      pY += pDy;
+      pX += pDx;
+    }
+  }
+  //Up
+  else if (direction[38]) {
+    if (pY > pR) {
+      pY -= pDy;
+    }
+  }
+  //Down
+  else if (direction[40]) {
+    if (pY < canvas.height - pR) {
+      pY += pDy;
+    }
+  }
+  //Left
+  else if (direction[37]) {
+    if (pX > pR) {
+      pX -= pDx;
+    }
+  }
+  //Right
+  else if (direction[39]) {
+    if (pX < canvas.width - pR) {
+      pX += pDx;
+    }
+  }
 };
 
-setInterval(draw, 15);
+setInterval(draw, 20);
