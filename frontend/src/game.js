@@ -43,6 +43,9 @@ function playerHit(){
   console.log('hit');
   lifeArr.pop();
   renderLives(lifeArr);
+  if(lifeArr.length === 0){
+    gameOver();
+  }
 };
 
 function increaseScore(){
@@ -55,8 +58,13 @@ function increaseScore(){
 };
 
 function gameOver(){
+  //save score here
+  //replace canvas html(?)
 
 };
+
+//posting the username to the player database
+
 /******************************************************************************
 * player canvas element
 ******************************************************************************/
@@ -120,8 +128,8 @@ function spawnEnemy() {
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
     r: 8,
-    dx: Math.random(),
-    dy: Math.random(),
+    dx: Math.random()*2,
+    dy: Math.random()*2,
     cooldown: false //for use in collision detection
   }
 
