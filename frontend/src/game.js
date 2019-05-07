@@ -7,15 +7,17 @@ const ctx = canvas.getContext("2d");
 let username;
 let signIn = false;
 let score;
-let clock = 0;
+let timerCount = 0;
+let lifeArr;
+let cookieCount;
 
 function startGame(){
   window.requestAnimationFrame(draw);
 };
 
 function gameClock(){
-  // ++gameClock
-  // gameClock.innerText = gameClock.toString(10).toMMSS()
+  ++timerCount;
+  // gameClock.innerText = timerCount.toString(10).toMMSS()
 };
 
 function calculateScore(time, count){
@@ -30,12 +32,18 @@ function renderLives(){
 };
 
 function playerHit(){
+  console.log('hit');
   lifeArr.pop();
   renderLives(lifeArr);
 };
 
 function increaseScore(){
   console.log('++');
+  ++cookieCount;
+  if (count === 10) {
+    // lifeArr.push(life)
+    // renderLives()
+  }
 };
 
 function gameOver(){
@@ -44,7 +52,7 @@ function gameOver(){
 /******************************************************************************
 * player canvas element
 ******************************************************************************/
-let pR = 10;
+let pR = 12;
 let pX = canvas.width/2;
 let pY = canvas.height/2;
 let pDx = 5;
@@ -90,7 +98,7 @@ function spawnEnemy() {
     type: t,
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
-    r: 5,
+    r: 8,
     dx: Math.random(),
     dy: Math.random(),
     cooldown: false //for use in collision detection
@@ -135,7 +143,7 @@ function enemyLoop(player) {
     ctx.fill();
     ctx.closePath();
 
-    //collision code starts here
+    //collision code start
     // find distance between midpoints
     let dx = o.x - player.x;
     let dy = o.y - player.y;
@@ -147,7 +155,7 @@ function enemyLoop(player) {
       o.dx = -o.dx;
       o.dy = -o.dy;
       // console.log('hit');
-    };//end of collision code
+    };//collision code end
 
     //direction on spawn
     if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r){
@@ -175,7 +183,7 @@ function spawnCookie() {
     type: 'green',
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
-    r: 3,
+    r: 5,
   }
   cookies.push(object);
 };
@@ -196,8 +204,8 @@ function cookieLoop(player) {
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if(distance <= player.r + c.r){
-      c.x = null;
-      c.y = null;
+      c.x = -10;
+      c.y = -10;
       // increaseScore();
       console.log("++");
     }
@@ -232,6 +240,8 @@ function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   animate();
   drawPlayer();
+
+  //arrow key control code included here for smooth movemement
   //Up and left
   if (direction[38] && direction[37]) {
     if (pY > pR && pX > pR) {
@@ -288,5 +298,90 @@ function draw(){
   window.requestAnimationFrame(draw);
 };//main draw loop end
 
+/******************************************************************************
+* mouse control using pointer lock API
+******************************************************************************/
+const RADIUS = 20;
+// pointer lock object forking for cross browser
+canvas.requestPointerLock = canvas.requestPointerLock ||
+                            canvas.mozRequestPointerLock;
 
+document.exitPointerLock = document.exitPointerLock ||
+                           document.mozExitPointerLock;
+
+canvas.onclick = function() {
+  canvas.requestPointerLock();
+};
+
+// pointer lock event listeners
+document.addEventListener('pointerlockchange', lockChangeAlert, false);
+document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+
+function lockChangeAlert() {
+  if (document.pointerLockElement === canvas ||
+      document.mozPointerLockElement === canvas) {
+    console.log('The pointer lock status is now locked');
+    document.addEventListener("mousemove", updatePosition, false);
+  } else {
+    console.log('The pointer lock status is now unlocked');
+    document.removeEventListener("mousemove", updatePosition, false);
+  }
+};
+
+function updatePosition(e) {
+  pX += e.movementX;
+  pY += e.movementY;
+
+  //wall detection logic
+  // if (pY > pR && pX > pR) {
+  //   pY -= pDy;
+  //   pX -= pDx;
+  // }
+  // if (pY < canvas.height - pR && pX > pR) {
+  //   pY += pDy;
+  //   pX -= pDx;
+  // }
+  // if (pY > pR && pX < canvas.width - pR) {
+  //   pY -= pDy;
+  //   pX += pDx;
+  // }
+  // if (pY < canvas.height - pR && pX < canvas.width - pR) {
+  //   pY += pDy;
+  //   pX += pDx;
+  // }
+  // if (pY > pR) {
+  //   pY -= pDy;
+  // }
+  // if (pY < canvas.height - pR) {
+  //   pY += pDy;
+  // }
+  // if (pX > pR) {
+  //   pX -= pDx;
+  // }
+  // if (pX < canvas.width - pR) {
+  //   pX += pDx;
+  // }
+  // pacman-esque map movement
+  if (pX > canvas.width + RADIUS) {
+    pX = -RADIUS;
+  }
+  if (pY > canvas.height + RADIUS) {
+    pY = -RADIUS;
+  }
+  if (pX < -RADIUS) {
+    pX = canvas.width + RADIUS;
+  }
+  if (pY < -RADIUS) {
+    pY = canvas.height + RADIUS;
+  }
+
+  if (!playerMovement) {
+    playerMovement = requestAnimationFrame(function() {
+      playerMovement = null;
+      draw();
+    });
+  }
+};
+
+// *******************
 window.requestAnimationFrame(draw);
