@@ -36,11 +36,8 @@ function animate() {
     spawn();
   }
 
-  //  calculate bounds of player obj here
-  let playerLeft = pX;
-  let playerRight = pX+pR;
-  let playerTop = pY;
-  let playerBot = pY+pR;
+  //  calculate bounds of player obj
+  let player = { r: pR, x: pX, y: pY };
 
   //animate code ends here
   for(let i = 0; i < objects.length; i++) {
@@ -54,16 +51,17 @@ function animate() {
     ctx.closePath();
 
     //collision code starts here
-    //  calculate bounds of last spawned ball
-    let top = o.y - o.r;
-    let bot = o.y + o.r;
-    let left = o.x - o.r;
-    let right = o.x + o.r;
+    // find distance between midpoints
+    let dx = o.x - player.x;
+    let dy = o.y - player.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(top === playerBot || bot === playerTop || left === playerRight || right === playerLeft){
+    if(distance < player.r + o.r){
       // playerHit();
+      o.dx = -o.dx;
+      o.dy = -o.dy;
       console.log('hit') //function to decrease player life
-    };//end of collision code, not sure if it works :P
+    };//end of collision code
 
 
     //direction on spawn
@@ -95,7 +93,9 @@ function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   animate();
   drawPlayer();
-
+  window.requestAnimationFrame(draw);
 };
 
-setInterval(draw, 15);
+// let interval = setInterval(draw, 10);
+
+window.requestAnimationFrame(draw);
