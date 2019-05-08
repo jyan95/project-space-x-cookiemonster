@@ -15,6 +15,7 @@ let currentPlayer;
 let score = 0;
 let timerCount = 0;
 let cookieCount = 0;
+let animating = false;
 let lifeArr = ["♥️","♥️","♥️"];
 let request = window.requestAnimationFrame(draw);
 /******************************************************************************
@@ -84,6 +85,7 @@ function postToGames(){
 ******************************************************************************/
 
 function startGame(){
+  animating = true;
   renderLife(lifeArr);
   return request;
 };
@@ -127,12 +129,10 @@ function eatCookie(){
 };
 
 function gameOver(){
-  //save score here
+  animating = false;
+  cancelAnimationFrame(request);
   postToGames();
-  // alert("GAME OVER");
-  // document.location.reload(); //forces page refresh
-  clearInterval(request);
-  //replace canvas html(?)
+  //reset canvas here
 };
 
 //posting the username to the player database
@@ -342,9 +342,10 @@ function animate() {
 //main draw
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  animate();
-  drawPlayer();
-
+  if (animating) {
+    animate();
+    drawPlayer();
+  }
   //arrow key control code included here for smooth movemement
   //Up and left
   if (direction[38] && direction[37]) {
