@@ -1,33 +1,86 @@
 //GLOBAL canvas element variables
+const PLAYERS_URL = "http://localhost:3000/players"
+const GAMES_URL = "https://localhost:3000/games"
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById('startButton');
 const lifebar = document.getElementById("lifebar");
 const gameOverCanvas = document.getElementById('gameOver');
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
-/******************************************************************************
-* core game logic
-******************************************************************************/
+const usernameForm = document.getElementById('usernameForm');
+const usernameInput = document.getElementById('usernameInput');
+
 let username;
-let signIn = false;
+// let signIn = false; unsure if needed
 let score = 0;
 let timerCount = 0;
 let cookieCount = 0;
 let lifeArr = ["♥️","♥️","♥️"];
 let request = window.requestAnimationFrame(draw);
+/******************************************************************************
+* event listeners
+******************************************************************************/
+usernameForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  let userInput = usernameInput.value;
+  console.log(userInput)
+  postToPlayers(userInput);
+  startBtn.style.display = 'none';
+});
 
-//start game
 startBtn.addEventListener('click', () => {
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
   // console.log('clicked start');
-  renderLife(lifeArr);
+  // postToGames();
   startGame();
 });
 
+/******************************************************************************
+* fetch functions
+******************************************************************************/
+function postToPlayers(userInput){
+  console.log('posting to players');
+  fetch(PLAYERS_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      username: userInput
+    })
+  })//end of fetch
+  .then(res => res.json())
+  .then(console.log)
+  //need to grab user ID here
+};
+
+function postToGames(){
+  fetch(GAMES_URL, {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json'
+    },
+    // body: JSON.stringify({
+    //   player_id:, //need to grab from above fetch
+    //   public_score: 0
+    // })
+  })//end fetch
+  .then(res => res.json())
+  .then(console.log)
+  //use response in gameover screen
+};
+
+/******************************************************************************
+* core game logic
+******************************************************************************/
+
 function startGame(){
- return request;
+  renderLife(lifeArr);
+  return request;
 };
 
 function gameClock(){
