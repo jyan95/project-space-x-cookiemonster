@@ -11,7 +11,7 @@ class PlayersController < ApplicationController
   end
 
   def create
-    # byebug
+    console.log(params["player"]["username"])
     @player = Player.find_or_create_by(username: params["player"]["username"])
     render json: @player
   end

@@ -1,6 +1,6 @@
 //GLOBAL canvas element variables
 const PLAYERS_URL = "http://localhost:3000/players"
-const GAMES_URL = "https://localhost:3000/games"
+const GAMES_URL = "http://localhost:3000/games"
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById('startButton');
@@ -11,7 +11,7 @@ const usernameForm = document.getElementById('usernameForm');
 const usernameInput = document.getElementById('usernameInput');
 
 let username;
-// let signIn = false; unsure if needed
+let currentPlayer;
 let score = 0;
 let timerCount = 0;
 let cookieCount = 0;
@@ -25,7 +25,7 @@ usernameForm.addEventListener('submit', (e) => {
   let userInput = usernameInput.value;
   console.log(userInput)
   postToPlayers(userInput);
-  startBtn.style.display = 'none';
+  startBtn.style.display = '';
 });
 
 startBtn.addEventListener('click', () => {
@@ -41,7 +41,7 @@ startBtn.addEventListener('click', () => {
 * fetch functions
 ******************************************************************************/
 function postToPlayers(userInput){
-  console.log('posting to players');
+  console.log('posting to players', userInput);
   fetch(PLAYERS_URL, {
     method: 'POST',
     headers: {
@@ -52,22 +52,28 @@ function postToPlayers(userInput){
       username: userInput
     })
   })//end of fetch
-  .then(res => res.json())
-  .then(console.log)
+  .then(res => console.log(res))
+  // .then(playerObj => {
+  //   console.log(playerObj);
+  //   currentPlayer = playerObj;
+  // })
   //need to grab user ID here
 };
 
 function postToGames(){
+  // console.log('posting to games');
+  // console.log(currentPlayer);
+  // console.log(currentPlayer.id);
   fetch(GAMES_URL, {
     method: 'POST',
     headers: {
-      'Content-type': 'application/json',
+      'Content-Type': 'application/json',
       'Accept': 'application/json'
     },
-    // body: JSON.stringify({
-    //   player_id:, //need to grab from above fetch
-    //   public_score: 0
-    // })
+    body: JSON.stringify({
+      player_id: 1,
+      public_score: 2000
+    })
   })//end fetch
   .then(res => res.json())
   .then(console.log)
@@ -123,8 +129,9 @@ function eatCookie(){
 
 function gameOver(){
   //save score here
-  alert("GAME OVER");
-  document.location.reload(); //forces page refresh
+  postToGames();
+  // alert("GAME OVER");
+  // document.location.reload(); //forces page refresh
   clearInterval(request);
   //replace canvas html(?)
 };
