@@ -9,6 +9,8 @@ const gameOverCanvas = document.getElementById('gameOver');
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
 const usernameInput = document.getElementById('usernameInput');
+const playerStatsButton = document.getElementById('playerStatsButton')
+const playerStats = document.getElementById('playerStats');
 
 let username;
 let currentPlayer;
@@ -35,6 +37,8 @@ startBtn.addEventListener('click', () => {
   startBtn.style.display = 'none';
   startGame();
 });
+
+playerStatsButton.addEventListener('click', getPlayerStats)
 
 /******************************************************************************
 * fetch functions
@@ -78,6 +82,16 @@ function postToGames(){
   .then(console.log)
   //use response in gameover screen
 };
+
+function getPlayerStats() {
+  fetch(`http://localhost:3000/players/${currentPlayer.id}`)
+    .then(resp => resp.json())
+    .then(player => {
+      players.games.forEach(game => {
+
+      })
+    })
+}
 
 /******************************************************************************
 * core game logic
