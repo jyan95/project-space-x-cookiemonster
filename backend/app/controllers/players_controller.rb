@@ -11,8 +11,7 @@ class PlayersController < ApplicationController
   end
 
   def create
-    console.log(params["player"]["username"])
-    @player = Player.find_or_create_by(username: params["player"]["username"])
+    @player = Player.find_or_create_by(username: params["username"])
     render json: @player
   end
 end

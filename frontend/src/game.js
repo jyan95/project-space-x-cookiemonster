@@ -26,14 +26,13 @@ usernameForm.addEventListener('submit', (e) => {
   console.log(userInput)
   postToPlayers(userInput);
   startBtn.style.display = '';
+  usernameForm.style.display = 'none';
 });
 
 startBtn.addEventListener('click', () => {
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
-  // console.log('clicked start');
-  // postToGames();
   startGame();
 });
 
@@ -52,11 +51,11 @@ function postToPlayers(userInput){
       username: userInput
     })
   })//end of fetch
-  .then(res => console.log(res))
-  // .then(playerObj => {
-  //   console.log(playerObj);
-  //   currentPlayer = playerObj;
-  // })
+  .then(res => res.json())
+  .then(playerObj => {
+    console.log(playerObj);
+    currentPlayer = playerObj;
+  })
   //need to grab user ID here
 };
 
@@ -71,8 +70,8 @@ function postToGames(){
       'Accept': 'application/json'
     },
     body: JSON.stringify({
-      player_id: 1,
-      public_score: 2000
+      player_id: currentPlayer.id,
+      public_score: score
     })
   })//end fetch
   .then(res => res.json())
