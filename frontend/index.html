@@ -45,8 +45,8 @@
           </div>
         </div>
       <div class="col-md-6">
-        <input id="startButton" class="btn btn-secondary btn-lg btn-block" type="button" value="Start">
-        <h5 id="lifebar"></h5>
+        <input id="startButton" class="btn btn-secondary btn-lg btn-block" type="button" value="Start Game">
+        <h5 id="lifebar" class="btn btn-danger" style="display: none;"></h5>
         <canvas id="canvas" style="display: none;" width='620' height="460" ></canvas>
         <canvas id="gameOverCanvas" style="display: none;" width='620' height="460"></canvas>
         <br>
@@ -56,10 +56,12 @@
           </div>
           <div class="card-body">
             <ul>
-              <p>To move the ball, use either the arrow keypad or your mouse. You may use a mix of both.</p>
-              <p>If you use the mouse, you must click within the screen box before using the mouse. To exit out of the mouse, press ESC.</p>
-              <p>Collect as many cookies as possible.</p>
-              <p>If you get hit by a ball, you lose a life.</p>
+              <p>> Use arrow keys or your cursor to move, you may use both</p>
+              <p>> Click within the game window to activate cursor movement</p>
+              <p>> Press ESC (escape key) to leave cursor control</p>
+              <p>> Increase your score by surviving and picking up cookies</p>
+              <p>> You start with 3 hitpoints, for every 10 cookies eaten, you gain a hitpoint</p>
+              <p>> If you get hit by a virus you will lose a hitpoint</p>
             </ul>
           </div>
         </div>
