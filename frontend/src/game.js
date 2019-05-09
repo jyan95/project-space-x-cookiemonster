@@ -40,6 +40,8 @@ let enemySprite4 = new Image();
 enemySprite4.src = "./assets/enemy4.png";
 let cookieSprite = new Image();
 cookieSprite.src = "./assets/cookie.png";
+let backgroundImg = new Image();
+backgroundImg.src = "./assets/space2.jpg";
 let gameOverScreen = new Image();
 gameOverScreen.src = "./assets/gameover2.jpg";
 //game audio
@@ -47,6 +49,7 @@ let cookieAudio = new Audio('./assets/cookie.mp3');
 let hitAudio = new Audio('./assets/hit.mp3');
 let startAudio = new Audio('./assets/start.wav');
 let mainAudio = new Audio('./assets/main.mp3');
+let loseAudio = new Audio('./assets/lose.wav');
 /******************************************************************************
 * EVENT LISTENERS
 ******************************************************************************/
@@ -60,7 +63,7 @@ usernameForm.addEventListener('submit', (e) => {
 });
 
 startBtn.addEventListener('click', () => {
-  canvas.style.background = "url('./assets/space.png')";
+  // canvas.style.background = "url('./assets/space.png')";
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
@@ -203,7 +206,6 @@ function startGame(){
   return request;
 };
 
-
 function gameClock(){
   ++timerCount;
   // gameClock.innerText = timerCount.toString(10).toMMSS()
@@ -222,10 +224,13 @@ function renderLife(lifeArr){
 
 function playerHit(){
   // console.log('hit');
-  hitAudio.play();
   lifeArr.pop();
+  if(lifeArr.length > 0){
+    hitAudio.play();
+  }
   renderLife(lifeArr);
   if(lifeArr.length === 0){
+    loseAudio.play();
     gameOver();
   }
 };
@@ -245,9 +250,15 @@ function eatCookie(){
 
 function gameOver(){
   animating = false;
-
   // cancelAnimationFrame(request);
   postToGames();
+  startBtn.style.display = '';
+};
+
+function resetGame(){
+  score = 0;
+  cookieCount = 0;
+  lifeArr = ["♥️","♥️","♥️"];
 };
 /******************************************************************************
 * PLAYER CANVAS ELEMENT
@@ -267,25 +278,16 @@ function drawPlayer(){
   ctx.drawImage(playerSprite, pX, pY, 40, 40);
 };
 
-//mouse control
-// let offsetLeft = canvas.offsetLeft;
-// let offsetTop = canvas.offsetTop;
-// console.log(offsetLeft, offsetTop)
-//
-//  canvas.addEventListener("mousemove", mouseMoveHandler, false);
-//
-//  function mouseMoveHandler(e) {
-//   pX = e.clientX - offsetLeft - offsetTop;
-//   pY = e.clientY - (2 * offsetTop);
-//   // console.log(pX, pY)
-// };
-
 //direction keys
 let direction = {};
 function doKeyDown(e) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   onkeydown = onkeyup = function(e){
     direction[e.keyCode] = e.type == 'keydown';
+  }
+
+  if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
+  e.preventDefault();
   }
 };
 /******************************************************************************
@@ -317,7 +319,6 @@ function spawnEnemy() {
     dx: Math.random()*2,
     dy: Math.random()*2,
   }
-
   enemies.push(object);
 }; //spawn code ends here
 
@@ -347,7 +348,7 @@ function cooldownLogic(o, player){
   };
 };
 
-//draw enemy loop for animate function
+//draw enemy obj loop for animate function
 function enemyLoop(player) {
   for(let i = 0; i < enemies.length; i++) {
 
@@ -385,7 +386,7 @@ function enemyLoop(player) {
     o.x += o.dx;
     o.y += o.dy;
   }
-};//enemy obj loop ends
+};
 /******************************************************************************
 * COOKIE CANVAS ELEMENT
 ******************************************************************************/
@@ -403,7 +404,7 @@ function spawnCookie() {
   cookies.push(cookie);
 };
 
-function despawnCookie(c) {
+function despawnCookie(c) { //currently displaces cookie out of view of canvas
   setTimeout(() => c.x = -100, cookieDespawnRate);
   setTimeout(() => c.y = -100, cookieDespawnRate);
 };
@@ -427,7 +428,6 @@ function cookieLoop(player) {
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if(distance <= player.r + c.r) {
-    // if(distance <= 10) {
     // console.log("++");
       c.x = -1000;
       c.y = -1000;
@@ -458,22 +458,31 @@ function animate() {
   cookieLoop(player);
 };
 
-
 //main draw
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (animating) {
+  ctx.drawImage(backgroundImg,
+    canvas.width/2-backgroundImg.width/2,
+    canvas.height/2-backgroundImg.height/2,
+    backgroundImg.width,
+    backgroundImg.height
+  );
+
+  if (animating) { //in play
     mainAudio.play();
     animate();
     drawPlayer();
-  } else {
+  } else { //gameover
     mainAudio.pause();
     ctx.drawImage(
       gameOverScreen,
       canvas.width/2-gameOverScreen.width/6,
       canvas.height/2-gameOverScreen.height/6,
       gameOverScreen.width/3,
-      gameOverScreen.height/3);
+      gameOverScreen.height/3
+    );
+    lifebar.style.display = 'none';
+    resetGame();
   }
 
   //arrow key control code included here for smooth movemement
@@ -529,19 +538,16 @@ function draw(){
       pX += pDx;
     }
   }
+
   window.requestAnimationFrame(draw);
 };//main draw end
-
 /******************************************************************************
 * POINTER LOCK API for MOUSE CONTROL
 ******************************************************************************/
 const RADIUS = 20;
 // pointer lock object forking for cross browser
-canvas.requestPointerLock = canvas.requestPointerLock ||
-                            canvas.mozRequestPointerLock;
-
-document.exitPointerLock = document.exitPointerLock ||
-                           document.mozExitPointerLock;
+canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
+document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
 
 canvas.onclick = function() {
   canvas.requestPointerLock();
@@ -554,10 +560,10 @@ document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
 function lockChangeAlert() {
   if (document.pointerLockElement === canvas ||
       document.mozPointerLockElement === canvas) {
-    console.log('The pointer lock status is now locked');
+    // console.log('The pointer lock status is now locked');
     document.addEventListener("mousemove", updatePosition, false);
   } else {
-    console.log('The pointer lock status is now unlocked');
+    // console.log('The pointer lock status is now unlocked');
     document.removeEventListener("mousemove", updatePosition, false);
   }
 };
@@ -565,7 +571,7 @@ function lockChangeAlert() {
 function updatePosition(e) {
   pX += e.movementX;
   pY += e.movementY;
-  // pacman-esque map movement
+  // infinite map movement
   if (pX > canvas.width + RADIUS) {
     pX = -RADIUS;
   }
