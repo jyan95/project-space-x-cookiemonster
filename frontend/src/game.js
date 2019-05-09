@@ -4,6 +4,7 @@ const GAMES_URL = "http://localhost:3000/games"
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById('startButton');
+const restartBtn = document.getElementById('restartButton');
 const lifebar = document.getElementById("lifebar");
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
@@ -38,6 +39,8 @@ let enemySprite3 = new Image();
 enemySprite3.src = "./assets/enemy3.png";
 let enemySprite4 = new Image();
 enemySprite4.src = "./assets/enemy4.png";
+let enemySprite5 = new Image();
+enemySprite4.src = "./assets/enemy5.png";
 let cookieSprite = new Image();
 cookieSprite.src = "./assets/cookie.png";
 let backgroundImg = new Image();
@@ -63,11 +66,17 @@ usernameForm.addEventListener('submit', (e) => {
 });
 
 startBtn.addEventListener('click', () => {
-  // canvas.style.background = "url('./assets/space.png')";
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
   startGame();
+});
+
+restartBtn.addEventListener('click', () => {
+  // canvas.style.display = '';
+  lifebar.style.display = '';
+  restartBtn.style.display = 'none';
+  restartGame();
 });
 
 playerStatsButton.addEventListener('click', e => {
@@ -122,7 +131,7 @@ function postToPlayers(userInput){
 };
 
 function postToGames(){
-  // console.log('posting to games');
+  console.log('posting to games');
   // console.log(currentPlayer);
   // console.log(currentPlayer.id);
   fetch(GAMES_URL, {
@@ -206,6 +215,12 @@ function startGame(){
   return request;
 };
 
+function restartGame(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  resetGame();
+  startGame();
+};
+
 function gameClock(){
   ++timerCount;
   // gameClock.innerText = timerCount.toString(10).toMMSS()
@@ -252,13 +267,17 @@ function gameOver(){
   animating = false;
   // cancelAnimationFrame(request);
   postToGames();
-  startBtn.style.display = '';
+  restartBtn.style.display = '';
 };
 
 function resetGame(){
   score = 0;
   cookieCount = 0;
   lifeArr = ["♥️","♥️","♥️"];
+  pX = canvas.width/2;
+  pY = canvas.height/2;
+  enemies = [];
+  cookies = [];
 };
 /******************************************************************************
 * PLAYER CANVAS ELEMENT
@@ -301,14 +320,16 @@ let enemies = [];
 function spawnEnemy() {
   let t;
   //randomize obj color
-  if (Math.random() < 0.25) {
+  if (Math.random() < 0.2) {
     t = enemySprite1;
-  } else if (Math.random() < 0.5) {
+  } else if (Math.random() < 0.4) {
     t = enemySprite2;
-  } else if (Math.random() < 0.75) {
+  } else if (Math.random() < 0.6) {
     t = enemySprite3;
-  } else {
+  } else if (Math.random() < 0.8) {
     t = enemySprite4;
+  } else {
+    t = enemySprite5;
   }
 
   let object = {
