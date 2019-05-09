@@ -10,7 +10,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.find_or_create_by(player_id: params["player_id"], public_score: params["public_score"])
+    @game = Game.create(player_id: params["player_id"], public_score: params["public_score"])
     render json: @game
   end
 
