@@ -7,7 +7,7 @@ Using HTML Canvas, we have built a simple dodge and 'eat' game with a Rails back
 ## Install Instructions
 1. Clone this repository
 2. Navigate to the repository in your console
-wip
+3. wip
 
 ### Contributors
 [guosamuel](https://github.com/guosamuel), [jyan95](https://github.com/jyan95)
