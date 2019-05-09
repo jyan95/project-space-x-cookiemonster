@@ -41,10 +41,12 @@ enemySprite4.src = "./assets/enemy4.png";
 let cookieSprite = new Image();
 cookieSprite.src = "./assets/cookie.png";
 let gameOverScreen = new Image();
-gameOverScreen.src = "./assets/gameover.png";
+gameOverScreen.src = "./assets/gameover2.jpg";
 //game audio
 let cookieAudio = new Audio('./assets/cookie.mp3');
-let hitAudio = new Audio('./assets/hit.mp3')
+let hitAudio = new Audio('./assets/hit.mp3');
+let startAudio = new Audio('./assets/start.wav');
+let mainAudio = new Audio('./assets/main.mp3');
 /******************************************************************************
 * EVENT LISTENERS
 ******************************************************************************/
@@ -194,10 +196,13 @@ function getLeaderboardStats() {
 * GAME LOGIC FUNCTIONS
 ******************************************************************************/
 function startGame(){
+  // startAudio.play();
+  // mainAudio.play();
   animating = true;
   renderLife(lifeArr);
   return request;
 };
+
 
 function gameClock(){
   ++timerCount;
@@ -458,10 +463,17 @@ function animate() {
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (animating) {
+    mainAudio.play();
     animate();
     drawPlayer();
   } else {
-    ctx.drawImage(gameOverScreen, 0, 0, 280, 200); //center math is not working??
+    mainAudio.pause();
+    ctx.drawImage(
+      gameOverScreen,
+      canvas.width/2-gameOverScreen.width/6,
+      canvas.height/2-gameOverScreen.height/6,
+      gameOverScreen.width/3,
+      gameOverScreen.height/3);
   }
 
   //arrow key control code included here for smooth movemement
