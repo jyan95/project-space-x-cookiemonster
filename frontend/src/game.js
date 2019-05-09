@@ -22,7 +22,6 @@ const leaderboardTableBody = document.getElementById('leaderboardTableBody');
 let username;
 let currentPlayer;
 let score = 0;
-let timerCount = 0;
 let cookieCount = 0;
 let animating = false;
 let lifeArr = ["♥️","♥️","♥️"];
@@ -292,15 +291,6 @@ function toggleSprite(){
     // console.log('cookiemonster');
     return playerSprite.src = "./assets/player.png";
   }
-};
-
-function gameClock(){
-  ++timerCount;
-  // gameClock.innerText = timerCount.toString(10).toMMSS()
-};
-
-function calculateScore(time, timerCount){
-  //calculate score based on time survived and objs picked up
 };
 
 function renderLife(lifeArr){
