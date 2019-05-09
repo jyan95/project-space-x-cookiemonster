@@ -5,7 +5,6 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById('startButton');
 const lifebar = document.getElementById("lifebar");
-const gameOverCanvas = document.getElementById('gameOver');
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
 const usernameInput = document.getElementById('usernameInput');
@@ -27,7 +26,8 @@ let animating = false;
 let lifeArr = ["♥️","♥️","♥️"];
 let request = window.requestAnimationFrame(draw);
 
-//SPRITE SET UP
+//GAME FLAVOR
+//game images
 let playerSprite = new Image();
 playerSprite.src = "./assets/player.png";
 let enemySprite1 = new Image();
@@ -39,7 +39,12 @@ enemySprite3.src = "./assets/enemy3.png";
 let enemySprite4 = new Image();
 enemySprite4.src = "./assets/enemy4.png";
 let cookieSprite = new Image();
-cookieSprite = "./assets/cookie.png";
+cookieSprite.src = "./assets/cookie.png";
+let gameOverScreen = new Image();
+gameOverScreen.src = "./assets/gameover.png";
+//game audio
+let cookieAudio = new Audio('./assets/cookie.mp3');
+let hitAudio = new Audio('./assets/hit.mp3')
 /******************************************************************************
 * EVENT LISTENERS
 ******************************************************************************/
@@ -53,7 +58,7 @@ usernameForm.addEventListener('submit', (e) => {
 });
 
 startBtn.addEventListener('click', () => {
-  canvas.style.background = "url('./assets/wall.png')";
+  canvas.style.background = "url('./assets/space.png')";
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
@@ -86,6 +91,8 @@ leaderboardButton.addEventListener('click', e => {
     leaderboardTable.style.display = "none"
   }
 });
+//arrow key CONTROL
+document.addEventListener("keydown", doKeyDown, true);
 /******************************************************************************
 * API FETCH FUNCTIONS
 ******************************************************************************/
@@ -209,7 +216,8 @@ function renderLife(lifeArr){
 };
 
 function playerHit(){
-  console.log('hit');
+  // console.log('hit');
+  hitAudio.play();
   lifeArr.pop();
   renderLife(lifeArr);
   if(lifeArr.length === 0){
@@ -232,14 +240,14 @@ function eatCookie(){
 
 function gameOver(){
   animating = false;
-  cancelAnimationFrame(request);
+
+  // cancelAnimationFrame(request);
   postToGames();
-  //reset canvas here
 };
 /******************************************************************************
 * PLAYER CANVAS ELEMENT
 ******************************************************************************/
-let pR = 12;
+let pR = 14;
 let pX = canvas.width/2;
 let pY = canvas.height/2;
 let pDx = 5;
@@ -251,7 +259,7 @@ function drawPlayer(){
   ctx.fillStyle = "rgba(0, 0, 0, 0)";
   ctx.fill();
   ctx.closePath();
-  ctx.drawImage(playerSprite, pX, pY, 30, 30);
+  ctx.drawImage(playerSprite, pX, pY, 40, 40);
 };
 
 //mouse control
@@ -275,9 +283,6 @@ function doKeyDown(e) {
     direction[e.keyCode] = e.type == 'keydown';
   }
 };
-
-document.addEventListener("keydown", doKeyDown, true)
-
 /******************************************************************************
 * ENEMY CANVAS ELEMENT
 ******************************************************************************/
@@ -376,22 +381,26 @@ function enemyLoop(player) {
     o.y += o.dy;
   }
 };//enemy obj loop ends
-
 /******************************************************************************
 * COOKIE CANVAS ELEMENT
 ******************************************************************************/
 let cookieSpawnRate = 5000;
+let cookieDespawnRate = 7000;
 let cookieLastSpawn = Date.now()+1000;
 let cookies = [];
 
 function spawnCookie() {
   let cookie = {
-    type: 'green',
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
-    r: 5,
+    r: 10,
   }
   cookies.push(cookie);
+};
+
+function despawnCookie(c) {
+  setTimeout(() => c.x = -100, cookieDespawnRate);
+  setTimeout(() => c.y = -100, cookieDespawnRate);
 };
 
 //draw cookie loop for animate function
@@ -404,11 +413,9 @@ function cookieLoop(player) {
     ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fill();
     ctx.closePath();
-    // ctx.drawImage(cookieSprite, c.x, c.y, 20, 20);
+    ctx.drawImage(cookieSprite, c.x, c.y, 20, 20);
 
-    //despawn cookie after 5 seconds
-    setTimeout(()=> c.x = -10, 3000);
-    setTimeout(()=> c.y = -10, 3000);
+    despawnCookie(c);
 
     let dx = c.x - player.x;
     let dy = c.y - player.y;
@@ -416,14 +423,14 @@ function cookieLoop(player) {
 
     if(distance <= player.r + c.r) {
     // if(distance <= 10) {
-      c.x = -10;
-      c.y = -10;
+    // console.log("++");
+      c.x = -1000;
+      c.y = -1000;
       eatCookie();
-      // console.log("++");
+      cookieAudio.play();
     }
   }
 };
-
 /******************************************************************************
 * ANIMATE AND DRAW FUNCTIONS
 ******************************************************************************/
@@ -453,6 +460,8 @@ function draw(){
   if (animating) {
     animate();
     drawPlayer();
+  } else {
+    ctx.drawImage(gameOverScreen, 0, 0, 280, 200); //center math is not working??
   }
 
   //arrow key control code included here for smooth movemement
@@ -544,37 +553,6 @@ function lockChangeAlert() {
 function updatePosition(e) {
   pX += e.movementX;
   pY += e.movementY;
-
-  //wall detection logic
-  // if (pY > pR && pX > pR) {
-  //   pY -= pDy;
-  //   pX -= pDx;
-  // }
-  // if (pY < canvas.height - pR && pX > pR) {
-  //   pY += pDy;
-  //   pX -= pDx;
-  // }
-  // if (pY > pR && pX < canvas.width - pR) {
-  //   pY -= pDy;
-  //   pX += pDx;
-  // }
-  // if (pY < canvas.height - pR && pX < canvas.width - pR) {
-  //   pY += pDy;
-  //   pX += pDx;
-  // }
-  // if (pY > pR) {
-  //   pY -= pDy;
-  // }
-  // if (pY < canvas.height - pR) {
-  //   pY += pDy;
-  // }
-  // if (pX > pR) {
-  //   pX -= pDx;
-  // }
-  // if (pX < canvas.width - pR) {
-  //   pX += pDx;
-  // }
-
   // pacman-esque map movement
   if (pX > canvas.width + RADIUS) {
     pX = -RADIUS;
