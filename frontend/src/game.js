@@ -67,15 +67,10 @@ usernameForm.addEventListener('submit', (e) => {
 
 startBtn.addEventListener('click', () => {
   canvas.style.display = '';
-  lifebar.style.display = '';
-  startBtn.style.display = 'none';
   startGame();
 });
 
 restartBtn.addEventListener('click', () => {
-  // canvas.style.display = '';
-  lifebar.style.display = '';
-  restartBtn.style.display = 'none';
   restartGame();
 });
 
@@ -84,24 +79,24 @@ playerStatsButton.addEventListener('click', e => {
     alert("Please enter a username.")
   }
   else if (playerStatsTable.style.display === "none") {
-    console.log("I SHOW THE TABLE")
+    // console.log("I SHOW THE TABLE")
     playerStatsTable.style = ""
     getPlayerStats();
   }
   else {
-    console.log("I HIDE THE TABLE")
+    // console.log("I HIDE THE TABLE")
     playerStatsTable.style.display = "none"
   }
 });
 
 leaderboardButton.addEventListener('click', e => {
   if (leaderboardTable.style.display === "none") {
-    console.log("I SHOW THE TABLE")
+    // console.log("I SHOW THE TABLE")
     leaderboardTable.style = ""
     getLeaderboardStats();
   }
   else {
-    console.log("I HIDE THE TABLE")
+    // console.log("I HIDE THE TABLE")
     leaderboardTable.style.display = "none"
   }
 });
@@ -111,7 +106,7 @@ document.addEventListener("keydown", doKeyDown, true);
 * API FETCH FUNCTIONS
 ******************************************************************************/
 function postToPlayers(userInput){
-  console.log('posting to players', userInput);
+  // console.log('posting to players', userInput);
   fetch(PLAYERS_URL, {
     method: 'POST',
     headers: {
@@ -124,16 +119,15 @@ function postToPlayers(userInput){
   })//end of fetch
   .then(res => res.json())
   .then(playerObj => {
-    console.log(playerObj);
+    // console.log(playerObj);
     currentPlayer = playerObj;
   })
   //need to grab user ID here
 };
 
 function postToGames(){
-  console.log('posting to games');
+  // console.log('posting to games');
   // console.log(currentPlayer);
-  // console.log(currentPlayer.id);
   fetch(GAMES_URL, {
     method: 'POST',
     headers: {
@@ -145,8 +139,8 @@ function postToGames(){
       public_score: score
     })
   })//end fetch
-  .then(res => res.json())
-  .then(console.log)
+  // .then(res => res.json())
+  // .then(console.log)
   //use response in gameover screen
 };
 
@@ -210,13 +204,18 @@ function getLeaderboardStats() {
 function startGame(){
   // startAudio.play();
   // mainAudio.play();
+  lifebar.style.display = '';
+  scorebar.style.display = '';
+  startBtn.style.display = 'none';
   animating = true;
   renderLife(lifeArr);
+  renderScore();
   return request;
 };
 
 function restartGame(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  restartBtn.style.display = 'none';
   resetGame();
   startGame();
 };
@@ -237,6 +236,10 @@ function renderLife(lifeArr){
   })
 };
 
+function renderScore(){
+  scorebar.innerHTML = `Score: ${score}`;
+};
+
 function playerHit(){
   // console.log('hit');
   lifeArr.pop();
@@ -251,11 +254,12 @@ function playerHit(){
 };
 
 function eatCookie(){
-  console.log('++');
+  // console.log('++');
   cookieCount += 1;
-  console.log(cookieCount);
+  // console.log(cookieCount);
   score += 100;
-  console.log(score);
+  renderScore();
+  // console.log(score);
   if (cookieCount === 10) {
     lifeArr.push("♥️")
     renderLife(lifeArr);
@@ -503,6 +507,7 @@ function draw(){
       gameOverScreen.height/3
     );
     lifebar.style.display = 'none';
+    scorebar.style.display = 'none';
     resetGame();
   }
 
