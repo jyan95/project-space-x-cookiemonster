@@ -1,4 +1,4 @@
-//GLOBAL canvas element variables
+//GLOBAL HTML ELEMENT VARIABLES
 const PLAYERS_URL = "http://localhost:3000/players"
 const GAMES_URL = "http://localhost:3000/games"
 const canvas = document.getElementById("canvas");
@@ -10,6 +10,7 @@ const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
 const usernameInput = document.getElementById('usernameInput');
 
+//GAME VARIABLES
 let username;
 let currentPlayer;
 let score = 0;
@@ -18,8 +19,22 @@ let cookieCount = 0;
 let animating = false;
 let lifeArr = ["♥️","♥️","♥️"];
 let request = window.requestAnimationFrame(draw);
+
+//SPRITE SET UP
+let playerSprite = new Image();
+playerSprite.src = "./assets/player.png";
+let enemySprite1 = new Image();
+enemySprite1.src = "./assets/enemy1.png";
+let enemySprite2 = new Image();
+enemySprite2.src = "./assets/enemy2.png";
+let enemySprite3 = new Image();
+enemySprite3.src = "./assets/enemy3.png";
+let enemySprite4 = new Image();
+enemySprite4.src = "./assets/enemy4.png";
+let cookieSprite = new Image();
+cookieSprite = "./assets/cookie.png";
 /******************************************************************************
-* event listeners
+* EVENT LISTENERS
 ******************************************************************************/
 usernameForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -31,14 +46,14 @@ usernameForm.addEventListener('submit', (e) => {
 });
 
 startBtn.addEventListener('click', () => {
+  canvas.style.background = "url('./assets/wall.png')";
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
   startGame();
 });
-
 /******************************************************************************
-* fetch functions
+* API FETCH FUNCTIONS
 ******************************************************************************/
 function postToPlayers(userInput){
   console.log('posting to players', userInput);
@@ -81,9 +96,8 @@ function postToGames(){
 };
 
 /******************************************************************************
-* core game logic
+* GAME LOGIC FUNCTIONS
 ******************************************************************************/
-
 function startGame(){
   animating = true;
   renderLife(lifeArr);
@@ -95,7 +109,7 @@ function gameClock(){
   // gameClock.innerText = timerCount.toString(10).toMMSS()
 };
 
-function calculateScore(time, count){
+function calculateScore(time, timerCount){
   //calculate score based on time survived and objs picked up
 };
 
@@ -134,11 +148,8 @@ function gameOver(){
   postToGames();
   //reset canvas here
 };
-
-//posting the username to the player database
-
 /******************************************************************************
-* player canvas element
+* PLAYER CANVAS ELEMENT
 ******************************************************************************/
 let pR = 12;
 let pX = canvas.width/2;
@@ -149,9 +160,10 @@ let pDy = 5;
 function drawPlayer(){
   ctx.beginPath();
   ctx.arc(pX, pY, pR, 0, Math.PI*2);
-  ctx.fillStyle = "orange";
+  ctx.fillStyle = "rgba(0, 0, 0, 0)";
   ctx.fill();
   ctx.closePath();
+  ctx.drawImage(playerSprite, pX, pY, 30, 30);
 };
 
 //mouse control
@@ -169,7 +181,7 @@ function drawPlayer(){
 
 //direction keys
 let direction = {};
-function doKeyDown(e){
+function doKeyDown(e) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   onkeydown = onkeyup = function(e){
     direction[e.keyCode] = e.type == 'keydown';
@@ -179,7 +191,7 @@ function doKeyDown(e){
 document.addEventListener("keydown", doKeyDown, true)
 
 /******************************************************************************
-* enemy canvas element
+* ENEMY CANVAS ELEMENT
 ******************************************************************************/
 let enemySpawnRate = 2000;
 let enemyLastSpawn = Date.now()+1000;
@@ -188,12 +200,16 @@ let enemies = [];
 //spawn code starts here
 function spawnEnemy() {
   let t;
-
-  if (Math.random() < 0.5) {
-    t = 'red';
+  //randomize obj color
+  if (Math.random() < 0.25) {
+    t = enemySprite1;
+  } else if (Math.random() < 0.5) {
+    t = enemySprite2;
+  } else if (Math.random() < 0.75) {
+    t = enemySprite3;
   } else {
-    t = 'blue';
-  } //randomize obj color
+    t = enemySprite4;
+  }
 
   let object = {
     type: t,
@@ -208,12 +224,12 @@ function spawnEnemy() {
 }; //spawn code ends here
 
 //to prevent objects from getting stuck
-function removeObj(o){
+function removeObj(o) {
   o.x = canvas.width + 100;
   o.y = canvas.hieght + 100;
 };
 
-function bounceLogic(o){
+function bounceLogic(o) {
   if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
     o.dy = -o.dy;
   };
@@ -240,9 +256,10 @@ function enemyLoop(player) {
     let o = enemies[i];
     ctx.beginPath();
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
-    ctx.fillStyle = o.type;
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fill();
     ctx.closePath();
+    ctx.drawImage(o.type, o.x, o.y, 30, 30);
 
     //collision code
     // find distance between midpoints
@@ -250,7 +267,8 @@ function enemyLoop(player) {
     let dy = o.y - player.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(distance < player.r + o.r){
+    if(distance < player.r + o.r) {
+    // if(distance < 30) {
       cooldownLogic(o, player); //invulnerability timer
       o.dx = -o.dx;
       o.dy = -o.dy;
@@ -272,9 +290,9 @@ function enemyLoop(player) {
 };//enemy obj loop ends
 
 /******************************************************************************
-* cookie canvas element
+* COOKIE CANVAS ELEMENT
 ******************************************************************************/
-let cookieSpawnRate = 10000;
+let cookieSpawnRate = 5000;
 let cookieLastSpawn = Date.now()+1000;
 let cookies = [];
 
@@ -295,19 +313,21 @@ function cookieLoop(player) {
     let c = cookies[i];
     ctx.beginPath();
     ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fill();
     ctx.closePath();
+    // ctx.drawImage(cookieSprite, c.x, c.y, 20, 20);
 
     //despawn cookie after 5 seconds
-    setTimeout(()=> c.x = -10, 5000);
-    setTimeout(()=> c.y = -10, 5000);
+    setTimeout(()=> c.x = -10, 3000);
+    setTimeout(()=> c.y = -10, 3000);
 
     let dx = c.x - player.x;
     let dy = c.y - player.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(distance <= player.r + c.r){
+    if(distance <= player.r + c.r) {
+    // if(distance <= 10) {
       c.x = -10;
       c.y = -10;
       eatCookie();
@@ -317,7 +337,7 @@ function cookieLoop(player) {
 };
 
 /******************************************************************************
-* animate and draw code
+* ANIMATE AND DRAW FUNCTIONS
 ******************************************************************************/
 //animate code
 function animate() {
@@ -332,7 +352,7 @@ function animate() {
     spawnCookie();
   }
 
-  let player = { r: pR, x: pX, y: pY, cooldown: false};
+  let player = { r: pR, x: pX, y: pY, cooldown: false };
 
   enemyLoop(player);
   cookieLoop(player);
@@ -346,6 +366,7 @@ function draw(){
     animate();
     drawPlayer();
   }
+
   //arrow key control code included here for smooth movemement
   //Up and left
   if (direction[38] && direction[37]) {
@@ -403,7 +424,7 @@ function draw(){
 };//main draw end
 
 /******************************************************************************
-* mouse control using pointer lock API
+* POINTER LOCK API for MOUSE CONTROL
 ******************************************************************************/
 const RADIUS = 20;
 // pointer lock object forking for cross browser
