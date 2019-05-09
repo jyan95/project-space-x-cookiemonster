@@ -1,5 +1,5 @@
 class GameSerializer < ActiveModel::Serializer
-  attributes :id, :player_id, :difficulty, :public_score, :created_at
+  attributes :id, :player_id, :difficulty, :public_score
 
   has_one :player
 end
