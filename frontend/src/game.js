@@ -24,7 +24,7 @@ let currentPlayer;
 let score = 0;
 let cookieCount = 0;
 let animating = false;
-let lifeArr = ["♥️","♥️","♥️"];
+let lifeArr = ["♥️ ","♥️ ","♥️ "];
 let request = window.requestAnimationFrame(draw);
 
 //FLAVOR
@@ -264,9 +264,18 @@ function startGame(){
   scorebar.style.display = '';
   startBtn.style.display = 'none';
   animating = true;
-  renderLife(lifeArr);
   renderScore();
+  renderLife(lifeArr);
+  timeScore();
   return request;
+};
+
+//increase score by 10 / s
+function timeScore(){
+  setInterval(() => {
+    score += 10
+    renderScore();
+  }, 1000)
 };
 
 function restartGame(){
@@ -294,7 +303,7 @@ function toggleSprite(){
 };
 
 function renderLife(lifeArr){
-  lifebar.innerHTML = 'Life: ';
+  lifebar.innerHTML = 'Life:';
   lifeArr.forEach(life => {
     lifebar.innerHTML += life;
   })
