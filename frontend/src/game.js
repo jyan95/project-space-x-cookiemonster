@@ -103,6 +103,50 @@ leaderboardButton.addEventListener('click', e => {
 //arrow key CONTROL
 document.addEventListener("keydown", doKeyDown, true);
 /******************************************************************************
+* POINTER LOCK API for MOUSE CONTROL
+******************************************************************************/
+const RADIUS = 20;
+// pointer lock object forking for cross browser
+canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
+document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+
+canvas.onclick = function() {
+  canvas.requestPointerLock();
+};
+
+// pointer lock event listeners
+document.addEventListener('pointerlockchange', lockChangeAlert, false);
+document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+
+function lockChangeAlert() {
+  if (document.pointerLockElement === canvas ||
+      document.mozPointerLockElement === canvas) {
+    // console.log('The pointer lock status is now locked');
+    document.addEventListener("mousemove", updatePosition, false);
+  } else {
+    // console.log('The pointer lock status is now unlocked');
+    document.removeEventListener("mousemove", updatePosition, false);
+  }
+};
+
+function updatePosition(e) {
+  pX += e.movementX;
+  pY += e.movementY;
+  // infinite map movement
+  if (pX > canvas.width + RADIUS) {
+    pX = -RADIUS;
+  }
+  if (pY > canvas.height + RADIUS) {
+    pY = -RADIUS;
+  }
+  if (pX < -RADIUS) {
+    pX = canvas.width + RADIUS;
+  }
+  if (pY < -RADIUS) {
+    pY = canvas.height + RADIUS;
+  }
+};
+/******************************************************************************
 * API FETCH FUNCTIONS
 ******************************************************************************/
 function postToPlayers(userInput){
@@ -567,47 +611,3 @@ function draw(){
 
   window.requestAnimationFrame(draw);
 };//main draw end
-/******************************************************************************
-* POINTER LOCK API for MOUSE CONTROL
-******************************************************************************/
-const RADIUS = 20;
-// pointer lock object forking for cross browser
-canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
-
-canvas.onclick = function() {
-  canvas.requestPointerLock();
-};
-
-// pointer lock event listeners
-document.addEventListener('pointerlockchange', lockChangeAlert, false);
-document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
-
-function lockChangeAlert() {
-  if (document.pointerLockElement === canvas ||
-      document.mozPointerLockElement === canvas) {
-    // console.log('The pointer lock status is now locked');
-    document.addEventListener("mousemove", updatePosition, false);
-  } else {
-    // console.log('The pointer lock status is now unlocked');
-    document.removeEventListener("mousemove", updatePosition, false);
-  }
-};
-
-function updatePosition(e) {
-  pX += e.movementX;
-  pY += e.movementY;
-  // infinite map movement
-  if (pX > canvas.width + RADIUS) {
-    pX = -RADIUS;
-  }
-  if (pY > canvas.height + RADIUS) {
-    pY = -RADIUS;
-  }
-  if (pX < -RADIUS) {
-    pX = canvas.width + RADIUS;
-  }
-  if (pY < -RADIUS) {
-    pY = canvas.height + RADIUS;
-  }
-};
