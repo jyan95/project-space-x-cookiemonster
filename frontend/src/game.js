@@ -49,6 +49,7 @@ backgroundImg.src = "./assets/space2.jpg";
 let gameOverScreen = new Image();
 gameOverScreen.src = "./assets/gameover2.jpg";
 let evans = false;
+
 //game audio
 let cookieAudio = new Audio('./assets/cookie.mp3');
 let hitAudio = new Audio('./assets/hit.mp3');
@@ -77,13 +78,12 @@ restartBtn.addEventListener('click', () => {
 });
 
 changeSpriteBtn.addEventListener('click', () => {
-  evans = !evans;
-  if(evans){
-    console.log('evans');
-    return playerSprite.src = "./assets/evans.png";
-  } else {
-    console.log('cookiemonster');
-    return playerSprite.src = "./assets/player.png";
+  toggleSprite();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.keyCode === 70) { //F button
+    toggleSprite();
   }
 });
 
@@ -275,6 +275,23 @@ function restartGame(){
   restartBtn.style.display = 'none';
   resetGame();
   startGame();
+};
+
+function toggleSprite(){
+  evans = !evans;
+  if(evans){
+    // console.log('evans');
+    if(Math.random() < 0.33 ){
+      return playerSprite.src = "./assets/evans.png";
+    } else if (Math.random() < 0.66 ){
+      return playerSprite.src = "./assets/evans2.png";
+    } else {
+      return playerSprite.src = "./assets/evans3.png";
+    }
+  } else {
+    // console.log('cookiemonster');
+    return playerSprite.src = "./assets/player.png";
+  }
 };
 
 function gameClock(){
