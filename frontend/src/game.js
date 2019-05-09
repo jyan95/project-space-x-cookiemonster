@@ -5,6 +5,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById('startButton');
 const restartBtn = document.getElementById('restartButton');
+const changeSpriteBtn = document.getElementById('changeSpriteButton');
 const lifebar = document.getElementById("lifebar");
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
@@ -47,6 +48,7 @@ let backgroundImg = new Image();
 backgroundImg.src = "./assets/space2.jpg";
 let gameOverScreen = new Image();
 gameOverScreen.src = "./assets/gameover2.jpg";
+let evans = false;
 //game audio
 let cookieAudio = new Audio('./assets/cookie.mp3');
 let hitAudio = new Audio('./assets/hit.mp3');
@@ -72,6 +74,17 @@ startBtn.addEventListener('click', () => {
 
 restartBtn.addEventListener('click', () => {
   restartGame();
+});
+
+changeSpriteBtn.addEventListener('click', () => {
+  evans = !evans;
+  if(evans){
+    console.log('evans');
+    return playerSprite.src = "./assets/evans.png";
+  } else {
+    console.log('cookiemonster');
+    return playerSprite.src = "./assets/player.png";
+  }
 });
 
 playerStatsButton.addEventListener('click', e => {
