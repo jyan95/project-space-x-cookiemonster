@@ -9,6 +9,13 @@ const gameOverCanvas = document.getElementById('gameOver');
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
 const usernameInput = document.getElementById('usernameInput');
+const playerStatsButton = document.getElementById('playerStatsButton');
+const playerStats = document.getElementById('playerStats');
+const playerStatsTable = document.getElementById('playerStatsTable');
+const playerStatsTableBody = document.getElementById('playerStatsTableBody');
+const leaderboardButton = document.getElementById('leaderboardButton');
+const leaderboardTable = document.getElementById('leaderboardTable');
+const leaderboardTableBody = document.getElementById('leaderboardTableBody');
 
 //GAME VARIABLES
 let username;
@@ -39,7 +46,7 @@ cookieSprite = "./assets/cookie.png";
 usernameForm.addEventListener('submit', (e) => {
   e.preventDefault();
   let userInput = usernameInput.value;
-  console.log(userInput)
+  // console.log(userInput)
   postToPlayers(userInput);
   startBtn.style.display = '';
   usernameForm.style.display = 'none';
@@ -51,6 +58,33 @@ startBtn.addEventListener('click', () => {
   lifebar.style.display = '';
   startBtn.style.display = 'none';
   startGame();
+});
+
+playerStatsButton.addEventListener('click', e => {
+  if (!currentPlayer) {
+    alert("Please enter a username.")
+  }
+  else if (playerStatsTable.style.display === "none") {
+    console.log("I SHOW THE TABLE")
+    playerStatsTable.style = ""
+    getPlayerStats();
+  }
+  else {
+    console.log("I HIDE THE TABLE")
+    playerStatsTable.style.display = "none"
+  }
+});
+
+leaderboardButton.addEventListener('click', e => {
+  if (leaderboardTable.style.display === "none") {
+    console.log("I SHOW THE TABLE")
+    leaderboardTable.style = ""
+    getLeaderboardStats();
+  }
+  else {
+    console.log("I HIDE THE TABLE")
+    leaderboardTable.style.display = "none"
+  }
 });
 /******************************************************************************
 * API FETCH FUNCTIONS
@@ -95,6 +129,60 @@ function postToGames(){
   //use response in gameover screen
 };
 
+function getPlayerStats() {
+  fetch(`http://localhost:3000/players/${currentPlayer.id}`)
+    .then(resp => resp.json())
+    .then(player => {
+      playerStatsTableBody.innerHTML = ``
+      let gameNumber = 1
+      player.games.forEach(game => {
+        if (!game.difficulty) {
+          playerStatsTableBody.innerHTML += `
+            <tr>
+              <td>${gameNumber}</td>
+              <td>N/A</td>
+              <td>${game.public_score}</td>
+            </tr>
+          `
+        }
+        else {
+          playerStatsTableBody.innerHTML += `
+            <tr>
+              <td>${gameNumber}</td>
+              <td>${game.difficulty}</td>
+              <td>${game.public_score}</td>
+            </tr>
+          `
+        }
+        gameNumber += 1
+      })
+    })
+};
+
+function getLeaderboardStats() {
+  fetch(GAMES_URL)
+    .then(resp => resp.json())
+    .then(array => {
+      let sortedArray = array.sort( (a, b) => {
+        return (a.public_score > b.public_score) ? -1 : 1
+      })
+      return sortedArray
+    })
+    .then(leaderboardArray => {
+      leaderboardTableBody.innerHTML = ``;
+      let rank = 1
+      leaderboardArray.slice(0, 10).forEach(player => {
+        leaderboardTableBody.innerHTML += `
+          <tr>
+            <td>${rank}</td>
+            <td>${player.player.username}</td>
+            <td>${player.public_score}</td>
+          </tr>
+        `
+        rank += 1
+      })
+    })
+};
 /******************************************************************************
 * GAME LOGIC FUNCTIONS
 ******************************************************************************/
