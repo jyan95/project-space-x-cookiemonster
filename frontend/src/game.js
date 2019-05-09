@@ -26,8 +26,8 @@ let animating = false;
 let lifeArr = ["♥️","♥️","♥️"];
 let request = window.requestAnimationFrame(draw);
 
-//GAME FLAVOR
-//game images
+//FLAVOR
+//game graphics
 let playerSprite = new Image();
 playerSprite.src = "./assets/player.png";
 let enemySprite1 = new Image();
