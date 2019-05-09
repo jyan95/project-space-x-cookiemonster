@@ -112,7 +112,7 @@ leaderboardButton.addEventListener('click', e => {
     leaderboardTable.style.display = "none"
   }
 });
-//arrow key CONTROL
+//arrow key control
 document.addEventListener("keydown", doKeyDown, true);
 /******************************************************************************
 * POINTER LOCK API for MOUSE CONTROL
@@ -161,7 +161,7 @@ function updatePosition(e) {
 /******************************************************************************
 * API FETCH FUNCTIONS
 ******************************************************************************/
-function postToPlayers(userInput){
+function postToPlayers(userInput) {
   // console.log('posting to players', userInput);
   fetch(PLAYERS_URL, {
     method: 'POST',
@@ -176,12 +176,11 @@ function postToPlayers(userInput){
   .then(res => res.json())
   .then(playerObj => {
     // console.log(playerObj);
-    currentPlayer = playerObj;
+    currentPlayer = playerObj; // set current player
   })
-  //need to grab user ID here
 };
 
-function postToGames(){
+function postToGames() {
   // console.log('posting to games');
   // console.log(currentPlayer);
   fetch(GAMES_URL, {
@@ -194,18 +193,14 @@ function postToGames(){
       player_id: currentPlayer.id,
       public_score: score
     })
-  })//end fetch
-  // .then(res => res.json())
-  // .then(console.log)
-  //use response in gameover screen
+  })//fetch ends here
 };
 
 function getPlayerStats() {
-  console.log("I posting to the player!")
+  // console.log("posting to the player");
   fetch(`http://localhost:3000/players/${currentPlayer.id}`)
     .then(resp => resp.json())
     .then(player => {
-      // debugger
       playerStatsTableBody.innerHTML = ``
       let gameNumber;
       if (player.games.length < 10) {
@@ -217,11 +212,10 @@ function getPlayerStats() {
               <td>${sanitizeDate(game.created_at)}</td>
               <td>${game.public_score}</td>
             </tr>
-          `
-          gameNumber += 1
+          `;
+          gameNumber += 1;
         })
-      }
-      else {
+      } else {
         gameNumber = player.games.length-10;
         player.games.slice(player.games.length-10, player.games.length).forEach(game => {
           playerStatsTableBody.innerHTML += `
@@ -230,25 +224,25 @@ function getPlayerStats() {
               <td>${sanitizeDate(game.created_at)}</td>
               <td>${game.public_score}</td>
             </tr>
-          `
-        gameNumber += 1
+          `;
+        gameNumber += 1;
         })
       }
-    })//end of thens
-}
+    })//then ends here
+};
 
 function getLeaderboardStats() {
   fetch(GAMES_URL)
     .then(resp => resp.json())
     .then(array => {
       let sortedArray = array.sort( (a, b) => {
-        return (a.public_score > b.public_score) ? -1 : 1
+        return (a.public_score > b.public_score) ? -1 : 1;
       })
-      return sortedArray
+      return sortedArray;
     })
     .then(leaderboardArray => {
       leaderboardTableBody.innerHTML = ``;
-      let rank = 1
+      let rank = 1;
       leaderboardArray.slice(0, 10).forEach(player => {
         leaderboardTableBody.innerHTML += `
           <tr>
@@ -256,15 +250,15 @@ function getLeaderboardStats() {
             <td>${player.player.username}</td>
             <td>${player.public_score}</td>
           </tr>
-        `
-        rank += 1
+        `;
+        rank += 1;
       })
     })
 };
 /******************************************************************************
 * GAME LOGIC FUNCTIONS
 ******************************************************************************/
-function startGame(){
+function startGame() {
   // startAudio.play();
   // mainAudio.play();
   lifebar.style.display = '';
@@ -278,27 +272,27 @@ function startGame(){
 };
 
 //increase score by 10 / s
-function timeScore(){
+function timeScore() {
   setInterval(() => {
     score += 10
     renderScore();
   }, 1000)
 };
 
-function restartGame(){
+function restartGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   restartBtn.style.display = 'none';
   resetGame();
   startGame();
 };
 
-function toggleSprite(){
+function toggleSprite() {
   evans = !evans;
-  if(evans){
+  if(evans) {
     // console.log('evans');
-    if(Math.random() < 0.33 ){
+    if(Math.random() < 0.33 ) {
       return playerSprite.src = "./assets/evans.png";
-    } else if (Math.random() < 0.66 ){
+    } else if (Math.random() < 0.66 ) {
       return playerSprite.src = "./assets/evans2.png";
     } else {
       return playerSprite.src = "./assets/evans3.png";
@@ -309,31 +303,31 @@ function toggleSprite(){
   }
 };
 
-function renderLife(lifeArr){
+function renderLife(lifeArr) {
   lifebar.innerHTML = 'Life:';
   lifeArr.forEach(life => {
     lifebar.innerHTML += life;
   })
 };
 
-function renderScore(){
+function renderScore() {
   scorebar.innerHTML = `Score: ${score}`;
 };
 
-function playerHit(){
+function playerHit() {
   // console.log('hit');
   lifeArr.pop();
-  if(lifeArr.length > 0){
+  if(lifeArr.length > 0) {
     hitAudio.play();
   }
   renderLife(lifeArr);
-  if(lifeArr.length === 0){
+  if(lifeArr.length === 0) {
     loseAudio.play();
     gameOver();
   }
 };
 
-function eatCookie(){
+function eatCookie() {
   // console.log('++');
   cookieCount += 1;
   // console.log(cookieCount);
@@ -347,14 +341,14 @@ function eatCookie(){
   }
 };
 
-function gameOver(){
+function gameOver() {
   animating = false;
   // cancelAnimationFrame(request);
   postToGames();
   restartBtn.style.display = '';
 };
 
-function resetGame(){
+function resetGame() {
   score = 0;
   cookieCount = 0;
   lifeArr = ["♥️","♥️","♥️"];
@@ -362,6 +356,16 @@ function resetGame(){
   pY = canvas.height/2;
   enemies = [];
   cookies = [];
+};
+
+function appendPlayerStats() {
+  return playerStatsTableBody.innerHTML += `
+    <tr>
+      <td>${gameNumber}</td>
+      <td>${sanitizeDate(game.created_at)}</td>
+      <td>${game.public_score}</td>
+    </tr>
+  `
 };
 //format date start
 function sanitizeDate(string) {
@@ -417,7 +421,7 @@ let pY = canvas.height/2;
 let pDx = 5;
 let pDy = 5;
 
-function drawPlayer(){
+function drawPlayer() {
   ctx.beginPath();
   ctx.arc(pX, pY, pR, 0, Math.PI*2);
   ctx.fillStyle = "rgba(0, 0, 0, 0)";
@@ -430,7 +434,7 @@ function drawPlayer(){
 let direction = {};
 function doKeyDown(e) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  onkeydown = onkeyup = function(e){
+  onkeydown = onkeyup = function(e) {
     direction[e.keyCode] = e.type == 'keydown';
   }
 
@@ -488,7 +492,7 @@ function bounceLogic(o) {
   };
 };
 
-function cooldownLogic(o, player){
+function cooldownLogic(o, player) {
   if (player.cooldown === false ) {
     // console.log('HIT');
     playerHit(); //function to decrease player life
@@ -511,13 +515,12 @@ function enemyLoop(player) {
     ctx.drawImage(o.type, o.x, o.y, 30, 30);
 
     //collision code
-    // find distance between midpoints
+    //distance between midpoints
     let dx = o.x - player.x;
     let dy = o.y - player.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if(distance < player.r + o.r) {
-    // if(distance < 30) {
       cooldownLogic(o, player); //invulnerability timer
       o.dx = -o.dx;
       o.dy = -o.dy;
@@ -525,7 +528,7 @@ function enemyLoop(player) {
     };
 
     //direction on spawn
-    if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r){
+    if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r) {
       o.dx = -o.dx;
     };
     if (o.y + o.dy > canvas.height-o.r || o.y + o.dy < o.r) {
@@ -603,13 +606,12 @@ function animate() {
   }
 
   let player = { r: pR, x: pX, y: pY, cooldown: false };
-
   enemyLoop(player);
   cookieLoop(player);
 };
 
 //main draw
-function draw(){
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(backgroundImg,
     canvas.width/2-backgroundImg.width/2,
@@ -635,7 +637,6 @@ function draw(){
     scorebar.style.display = 'none';
     resetGame();
   }
-
   //arrow key control code included here for smooth movemement
   //Up and left
   if (direction[38] && direction[37]) {
@@ -689,6 +690,5 @@ function draw(){
       pX += pDx;
     }
   }
-
   window.requestAnimationFrame(draw);
 };//main draw end
