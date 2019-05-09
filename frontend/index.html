@@ -7,7 +7,6 @@
     <style>
     	* { padding: 0; margin: 0; }
     	canvas {
-        background: #eee;
         display: block;
         margin: 0 auto;
         border: 1px solid black;
@@ -33,7 +32,7 @@
                  <!-- <button type="submit" class="btn btn-success">Submit</button> -->
                </form>
              </p><br>
-                 <button id="playerStatsButton" type="button" class="btn btn-info">Personal Stats</button>
+                 <button id="playerStatsButton" type="button" class="btn btn-outline-primary">Personal Stats</button>
                  <br>
                  <br>
                  <table id="playerStatsTable" class="table table-striped" style="display: none">
@@ -48,7 +47,7 @@
                   </tbody>
                 </table>
                </p><br>
-               <button id="leaderboardButton" type="button" class="btn btn-info">Leaderboard</button>
+               <button id="leaderboardButton" type="button" class="btn btn-outline-primary">Leaderboard</button>
                <br>
                <br>
                <table id="leaderboardTable" class="table table-striped" style="display: none">
@@ -70,14 +69,13 @@
           </div>
         </div>
       <div class="col-md-6">
-        <input id="startButton" class="btn btn-secondary btn-lg btn-block" type="button" value="Start Game" style="display: none;">
+        <input id="startButton" class="btn btn-outline-primary btn-lg btn-block" type="button" value="Start Game" style="display: none;">
         <h5 id="lifebar" class="btn btn-danger" style="display: none;"></h5>
         <canvas id="canvas" style="display: none;" width='620' height="460" ></canvas>
-        <canvas id="gameOverCanvas" style="display: none;" width='620' height="460"></canvas>
         <br>
-        <div class="card text-white bg-secondary mb-3" style="max-width: '740';">
+        <div class="card border-info mb-3" style="max-width: '740';">
           <div class="card-header">
-            <h5>Instructions:</h5>
+            <h5>Gameplay:</h5>
           </div>
           <div class="card-body">
             <ul>
@@ -85,7 +83,7 @@
               <p>> Click within the game window to activate cursor movement</p>
               <p>> Press ESC (escape key) to leave cursor control</p>
               <p>> Increase your score by surviving and picking up cookies</p>
-              <p>> You start with 3 hitpoints, for every 10 cookies eaten, you gain a hitpoint</p>
+              <p>> Start with 3 hitpoints, every 10 cookies eaten = 1 hitpoint</p>
               <p>> If you get hit by a virus you will lose a hitpoint</p>
             </ul>
           </div>
@@ -96,7 +94,6 @@
       </div>
     </div>
 
-  <!-- <script type="text/javascript" src="https://www.turnjs.com/lib/turn.min.js "></script>  -->
   <script src='./src/game.js'></script>
   <!-- <script src='./src/player.js'></script> -->
   <!-- <script src='./src/cookies.js'></script> -->

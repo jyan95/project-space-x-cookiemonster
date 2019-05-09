@@ -1,22 +1,22 @@
-//GLOBAL canvas element variables
+//GLOBAL HTML ELEMENT VARIABLES
 const PLAYERS_URL = "http://localhost:3000/players"
 const GAMES_URL = "http://localhost:3000/games"
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById('startButton');
 const lifebar = document.getElementById("lifebar");
-const gameOverCanvas = document.getElementById('gameOver');
 const gameDiv = document.getElementsByClassName('col-md-6')[0];
 const usernameForm = document.getElementById('usernameForm');
 const usernameInput = document.getElementById('usernameInput');
-const playerStatsButton = document.getElementById('playerStatsButton')
+const playerStatsButton = document.getElementById('playerStatsButton');
 const playerStats = document.getElementById('playerStats');
-const playerStatsTable = document.getElementById('playerStatsTable')
-const playerStatsTableBody = document.getElementById('playerStatsTableBody')
-const leaderboardButton = document.getElementById('leaderboardButton')
-const leaderboardTable = document.getElementById('leaderboardTable')
-const leaderboardTableBody = document.getElementById('leaderboardTableBody')
+const playerStatsTable = document.getElementById('playerStatsTable');
+const playerStatsTableBody = document.getElementById('playerStatsTableBody');
+const leaderboardButton = document.getElementById('leaderboardButton');
+const leaderboardTable = document.getElementById('leaderboardTable');
+const leaderboardTableBody = document.getElementById('leaderboardTableBody');
 
+//GAME VARIABLES
 let username;
 let currentPlayer;
 let score = 0;
@@ -25,19 +25,42 @@ let cookieCount = 0;
 let animating = false;
 let lifeArr = ["♥️","♥️","♥️"];
 let request = window.requestAnimationFrame(draw);
+
+//GAME FLAVOR
+//game images
+let playerSprite = new Image();
+playerSprite.src = "./assets/player.png";
+let enemySprite1 = new Image();
+enemySprite1.src = "./assets/enemy1.png";
+let enemySprite2 = new Image();
+enemySprite2.src = "./assets/enemy2.png";
+let enemySprite3 = new Image();
+enemySprite3.src = "./assets/enemy3.png";
+let enemySprite4 = new Image();
+enemySprite4.src = "./assets/enemy4.png";
+let cookieSprite = new Image();
+cookieSprite.src = "./assets/cookie.png";
+let gameOverScreen = new Image();
+gameOverScreen.src = "./assets/gameover2.jpg";
+//game audio
+let cookieAudio = new Audio('./assets/cookie.mp3');
+let hitAudio = new Audio('./assets/hit.mp3');
+let startAudio = new Audio('./assets/start.wav');
+let mainAudio = new Audio('./assets/main.mp3');
 /******************************************************************************
-* event listeners
+* EVENT LISTENERS
 ******************************************************************************/
 usernameForm.addEventListener('submit', (e) => {
   e.preventDefault();
   let userInput = usernameInput.value;
-  console.log(userInput)
+  // console.log(userInput)
   postToPlayers(userInput);
   startBtn.style.display = '';
   usernameForm.style.display = 'none';
 });
 
 startBtn.addEventListener('click', () => {
+  canvas.style.background = "url('./assets/space.png')";
   canvas.style.display = '';
   lifebar.style.display = '';
   startBtn.style.display = 'none';
@@ -57,7 +80,7 @@ playerStatsButton.addEventListener('click', e => {
     console.log("I HIDE THE TABLE")
     playerStatsTable.style.display = "none"
   }
-})
+});
 
 leaderboardButton.addEventListener('click', e => {
   if (leaderboardTable.style.display === "none") {
@@ -69,10 +92,11 @@ leaderboardButton.addEventListener('click', e => {
     console.log("I HIDE THE TABLE")
     leaderboardTable.style.display = "none"
   }
-})
-
+});
+//arrow key CONTROL
+document.addEventListener("keydown", doKeyDown, true);
 /******************************************************************************
-* fetch functions
+* API FETCH FUNCTIONS
 ******************************************************************************/
 function postToPlayers(userInput){
   console.log('posting to players', userInput);
@@ -142,7 +166,7 @@ function getPlayerStats() {
         gameNumber += 1
       })
     })
-}
+};
 
 function getLeaderboardStats() {
   fetch(GAMES_URL)
@@ -167,24 +191,25 @@ function getLeaderboardStats() {
         rank += 1
       })
     })
-}
-
+};
 /******************************************************************************
-* core game logic
+* GAME LOGIC FUNCTIONS
 ******************************************************************************/
-
 function startGame(){
+  // startAudio.play();
+  // mainAudio.play();
   animating = true;
   renderLife(lifeArr);
   return request;
 };
+
 
 function gameClock(){
   ++timerCount;
   // gameClock.innerText = timerCount.toString(10).toMMSS()
 };
 
-function calculateScore(time, count){
+function calculateScore(time, timerCount){
   //calculate score based on time survived and objs picked up
 };
 
@@ -196,7 +221,8 @@ function renderLife(lifeArr){
 };
 
 function playerHit(){
-  console.log('hit');
+  // console.log('hit');
+  hitAudio.play();
   lifeArr.pop();
   renderLife(lifeArr);
   if(lifeArr.length === 0){
@@ -219,17 +245,14 @@ function eatCookie(){
 
 function gameOver(){
   animating = false;
-  cancelAnimationFrame(request);
+
+  // cancelAnimationFrame(request);
   postToGames();
-  //reset canvas here
 };
-
-//posting the username to the player database
-
 /******************************************************************************
-* player canvas element
+* PLAYER CANVAS ELEMENT
 ******************************************************************************/
-let pR = 12;
+let pR = 14;
 let pX = canvas.width/2;
 let pY = canvas.height/2;
 let pDx = 5;
@@ -238,9 +261,10 @@ let pDy = 5;
 function drawPlayer(){
   ctx.beginPath();
   ctx.arc(pX, pY, pR, 0, Math.PI*2);
-  ctx.fillStyle = "orange";
+  ctx.fillStyle = "rgba(0, 0, 0, 0)";
   ctx.fill();
   ctx.closePath();
+  ctx.drawImage(playerSprite, pX, pY, 40, 40);
 };
 
 //mouse control
@@ -258,17 +282,14 @@ function drawPlayer(){
 
 //direction keys
 let direction = {};
-function doKeyDown(e){
+function doKeyDown(e) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   onkeydown = onkeyup = function(e){
     direction[e.keyCode] = e.type == 'keydown';
   }
 };
-
-document.addEventListener("keydown", doKeyDown, true)
-
 /******************************************************************************
-* enemy canvas element
+* ENEMY CANVAS ELEMENT
 ******************************************************************************/
 let enemySpawnRate = 2000;
 let enemyLastSpawn = Date.now()+1000;
@@ -277,12 +298,16 @@ let enemies = [];
 //spawn code starts here
 function spawnEnemy() {
   let t;
-
-  if (Math.random() < 0.5) {
-    t = 'red';
+  //randomize obj color
+  if (Math.random() < 0.25) {
+    t = enemySprite1;
+  } else if (Math.random() < 0.5) {
+    t = enemySprite2;
+  } else if (Math.random() < 0.75) {
+    t = enemySprite3;
   } else {
-    t = 'blue';
-  } //randomize obj color
+    t = enemySprite4;
+  }
 
   let object = {
     type: t,
@@ -297,12 +322,12 @@ function spawnEnemy() {
 }; //spawn code ends here
 
 //to prevent objects from getting stuck
-function removeObj(o){
+function removeObj(o) {
   o.x = canvas.width + 100;
   o.y = canvas.hieght + 100;
 };
 
-function bounceLogic(o){
+function bounceLogic(o) {
   if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
     o.dy = -o.dy;
   };
@@ -329,9 +354,10 @@ function enemyLoop(player) {
     let o = enemies[i];
     ctx.beginPath();
     ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
-    ctx.fillStyle = o.type;
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fill();
     ctx.closePath();
+    ctx.drawImage(o.type, o.x, o.y, 30, 30);
 
     //collision code
     // find distance between midpoints
@@ -339,7 +365,8 @@ function enemyLoop(player) {
     let dy = o.y - player.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(distance < player.r + o.r){
+    if(distance < player.r + o.r) {
+    // if(distance < 30) {
       cooldownLogic(o, player); //invulnerability timer
       o.dx = -o.dx;
       o.dy = -o.dy;
@@ -359,22 +386,26 @@ function enemyLoop(player) {
     o.y += o.dy;
   }
 };//enemy obj loop ends
-
 /******************************************************************************
-* cookie canvas element
+* COOKIE CANVAS ELEMENT
 ******************************************************************************/
-let cookieSpawnRate = 10000;
+let cookieSpawnRate = 5000;
+let cookieDespawnRate = 7000;
 let cookieLastSpawn = Date.now()+1000;
 let cookies = [];
 
 function spawnCookie() {
   let cookie = {
-    type: 'green',
     x: Math.random() * (canvas.width - 30) + 15,
     y: Math.random() * (canvas.height - 50) + 25,
-    r: 5,
+    r: 10,
   }
   cookies.push(cookie);
+};
+
+function despawnCookie(c) {
+  setTimeout(() => c.x = -100, cookieDespawnRate);
+  setTimeout(() => c.y = -100, cookieDespawnRate);
 };
 
 //draw cookie loop for animate function
@@ -384,29 +415,29 @@ function cookieLoop(player) {
     let c = cookies[i];
     ctx.beginPath();
     ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fill();
     ctx.closePath();
+    ctx.drawImage(cookieSprite, c.x, c.y, 20, 20);
 
-    //despawn cookie after 5 seconds
-    setTimeout(()=> c.x = -10, 5000);
-    setTimeout(()=> c.y = -10, 5000);
+    despawnCookie(c);
 
     let dx = c.x - player.x;
     let dy = c.y - player.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(distance <= player.r + c.r){
-      c.x = -10;
-      c.y = -10;
+    if(distance <= player.r + c.r) {
+    // if(distance <= 10) {
+    // console.log("++");
+      c.x = -1000;
+      c.y = -1000;
       eatCookie();
-      // console.log("++");
+      cookieAudio.play();
     }
   }
 };
-
 /******************************************************************************
-* animate and draw code
+* ANIMATE AND DRAW FUNCTIONS
 ******************************************************************************/
 //animate code
 function animate() {
@@ -421,7 +452,7 @@ function animate() {
     spawnCookie();
   }
 
-  let player = { r: pR, x: pX, y: pY, cooldown: false};
+  let player = { r: pR, x: pX, y: pY, cooldown: false };
 
   enemyLoop(player);
   cookieLoop(player);
@@ -432,9 +463,19 @@ function animate() {
 function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (animating) {
+    mainAudio.play();
     animate();
     drawPlayer();
+  } else {
+    mainAudio.pause();
+    ctx.drawImage(
+      gameOverScreen,
+      canvas.width/2-gameOverScreen.width/6,
+      canvas.height/2-gameOverScreen.height/6,
+      gameOverScreen.width/3,
+      gameOverScreen.height/3);
   }
+
   //arrow key control code included here for smooth movemement
   //Up and left
   if (direction[38] && direction[37]) {
@@ -492,7 +533,7 @@ function draw(){
 };//main draw end
 
 /******************************************************************************
-* mouse control using pointer lock API
+* POINTER LOCK API for MOUSE CONTROL
 ******************************************************************************/
 const RADIUS = 20;
 // pointer lock object forking for cross browser
@@ -524,37 +565,6 @@ function lockChangeAlert() {
 function updatePosition(e) {
   pX += e.movementX;
   pY += e.movementY;
-
-  //wall detection logic
-  // if (pY > pR && pX > pR) {
-  //   pY -= pDy;
-  //   pX -= pDx;
-  // }
-  // if (pY < canvas.height - pR && pX > pR) {
-  //   pY += pDy;
-  //   pX -= pDx;
-  // }
-  // if (pY > pR && pX < canvas.width - pR) {
-  //   pY -= pDy;
-  //   pX += pDx;
-  // }
-  // if (pY < canvas.height - pR && pX < canvas.width - pR) {
-  //   pY += pDy;
-  //   pX += pDx;
-  // }
-  // if (pY > pR) {
-  //   pY -= pDy;
-  // }
-  // if (pY < canvas.height - pR) {
-  //   pY += pDy;
-  // }
-  // if (pX > pR) {
-  //   pX -= pDx;
-  // }
-  // if (pX < canvas.width - pR) {
-  //   pX += pDx;
-  // }
-
   // pacman-esque map movement
   if (pX > canvas.width + RADIUS) {
     pX = -RADIUS;
