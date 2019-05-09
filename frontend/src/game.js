@@ -22,10 +22,9 @@ const leaderboardTableBody = document.getElementById('leaderboardTableBody');
 let username;
 let currentPlayer;
 let score = 0;
-let timerCount = 0;
 let cookieCount = 0;
 let animating = false;
-let lifeArr = ["♥️","♥️","♥️"];
+let lifeArr = ["♥️ ","♥️ ","♥️ "];
 let request = window.requestAnimationFrame(draw);
 
 //FLAVOR
@@ -202,34 +201,41 @@ function postToGames(){
 };
 
 function getPlayerStats() {
+  console.log("I posting to the player!")
   fetch(`http://localhost:3000/players/${currentPlayer.id}`)
     .then(resp => resp.json())
     .then(player => {
+      // debugger
       playerStatsTableBody.innerHTML = ``
-      let gameNumber = 1
-      player.games.forEach(game => {
-        if (!game.difficulty) {
+      let gameNumber;
+      if (player.games.length < 10) {
+        gameNumber = 1
+        player.games.forEach(game => {
           playerStatsTableBody.innerHTML += `
             <tr>
               <td>${gameNumber}</td>
-              <td>N/A</td>
+              <td>${sanitizeDate(game.created_at)}</td>
               <td>${game.public_score}</td>
             </tr>
           `
-        }
-        else {
+          gameNumber += 1
+        })
+      }
+      else {
+        gameNumber = player.games.length-10;
+        player.games.slice(player.games.length-10, player.games.length).forEach(game => {
           playerStatsTableBody.innerHTML += `
             <tr>
               <td>${gameNumber}</td>
-              <td>${game.difficulty}</td>
+              <td>${sanitizeDate(game.created_at)}</td>
               <td>${game.public_score}</td>
             </tr>
           `
-        }
         gameNumber += 1
-      })
-    })
-};
+        })
+      }
+    })//end of thens
+}
 
 function getLeaderboardStats() {
   fetch(GAMES_URL)
@@ -265,9 +271,18 @@ function startGame(){
   scorebar.style.display = '';
   startBtn.style.display = 'none';
   animating = true;
-  renderLife(lifeArr);
   renderScore();
+  renderLife(lifeArr);
+  timeScore();
   return request;
+};
+
+//increase score by 10 / s
+function timeScore(){
+  setInterval(() => {
+    score += 10
+    renderScore();
+  }, 1000)
 };
 
 function restartGame(){
@@ -294,17 +309,8 @@ function toggleSprite(){
   }
 };
 
-function gameClock(){
-  ++timerCount;
-  // gameClock.innerText = timerCount.toString(10).toMMSS()
-};
-
-function calculateScore(time, timerCount){
-  //calculate score based on time survived and objs picked up
-};
-
 function renderLife(lifeArr){
-  lifebar.innerHTML = 'Life: ';
+  lifebar.innerHTML = 'Life:';
   lifeArr.forEach(life => {
     lifebar.innerHTML += life;
   })
@@ -357,6 +363,51 @@ function resetGame(){
   enemies = [];
   cookies = [];
 };
+//format date start
+function sanitizeDate(string) {
+  // console.log(string.slice(5,7))
+  let month_number = parseInt(string.slice(5,7), 10)
+  let year = string.slice(0,4)
+  let date = parseInt(string.slice(8,10), 10)
+  let month_name;
+  if (month_number === 1) {
+    month_name = "January"
+  }
+  else if (month_number === 2) {
+    month_name = "February"
+  }
+  else if (month_number === 3) {
+    month_name = "March"
+  }
+  else if (month_number === 4) {
+    month_name = "April"
+  }
+  else if (month_number === 5) {
+    month_name = "May"
+  }
+  else if (month_number === 6) {
+    month_name = "June"
+  }
+  else if (month_number === 7) {
+    month_name = "July"
+  }
+  else if (month_number === 8) {
+    month_name = "August"
+  }
+  else if (month_number === 9) {
+    month_name = "September"
+  }
+  else if (month_number === 10) {
+    month_name = "October"
+  }
+  else if (month_number === 11) {
+    month_name = "November"
+  }
+  else if (month_number === 12) {
+    month_name = "December"
+  }
+  return `${month_name} ${date}, ${year}`
+};//format date end
 /******************************************************************************
 * PLAYER CANVAS ELEMENT
 ******************************************************************************/
