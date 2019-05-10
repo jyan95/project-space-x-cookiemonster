@@ -78,6 +78,7 @@ restartBtn.addEventListener('click', () => {
 
 changeSpriteBtn.addEventListener('click', () => {
   toggleSprite();
+  alert("Sprite has been changed!");
 });
 
 document.addEventListener('keydown', (e) => {
@@ -88,32 +89,33 @@ document.addEventListener('keydown', (e) => {
 
 playerStatsButton.addEventListener('click', e => {
   if (!currentPlayer) {
-    alert("Please enter a username.")
+    alert("Please enter a username!");
   }
   else if (playerStatsTable.style.display === "none") {
     // console.log("I SHOW THE TABLE")
-    playerStatsTable.style = ""
+    playerStatsTable.style = "";
     getPlayerStats();
-  }
-  else {
+  } else {
     // console.log("I HIDE THE TABLE")
-    playerStatsTable.style.display = "none"
+    playerStatsTable.style.display = "none";
   }
 });
 
 leaderboardButton.addEventListener('click', e => {
   if (leaderboardTable.style.display === "none") {
     // console.log("I SHOW THE TABLE")
-    leaderboardTable.style = ""
+    leaderboardTable.style = "";
     getLeaderboardStats();
-  }
-  else {
+  } else {
     // console.log("I HIDE THE TABLE")
-    leaderboardTable.style.display = "none"
+    leaderboardTable.style.display = "none";
   }
 });
 //arrow key control
 document.addEventListener("keydown", doKeyDown, true);
+//invoke esc key on gameover
+// let evt = new KeyBoardEvent('keydown', {'keycode': 27});
+// evt.initKeyEvent("keypress", true, true, null, false, false, false, false, 27, 0);
 /******************************************************************************
 * POINTER LOCK API for MOUSE CONTROL
 ******************************************************************************/
@@ -343,9 +345,10 @@ function eatCookie() {
 
 function gameOver() {
   animating = false;
-  // cancelAnimationFrame(request);
+  // document.dispatchEvent( evt );
   postToGames();
   restartBtn.style.display = '';
+  alert(`YOUR SCORE: ${score}`);
 };
 
 function resetGame() {
