@@ -486,11 +486,11 @@ function removeObj(o) {
 };
 
 function bounceLogic(o) {
-  if (o.y + o.dy < 0 || o.y + o.dy > canvas.height) {
+  if (o.y + o.dy < 0 - o.r || o.y + o.dy > canvas.height - o.r*2) {
     o.dy = -o.dy;
   };
 
-  if (o.x + o.dx < 0 || o.x + o.dx > canvas.width) {
+  if (o.x + o.dx < 0 - o.r|| o.x + o.dx > canvas.width - o.r*2) {
     o.dx = -o.dx;
   };
 };
@@ -528,14 +528,6 @@ function enemyLoop(player) {
       o.dx = -o.dx;
       o.dy = -o.dy;
       // console.log('hit');
-    };
-
-    //direction on spawn
-    if (o.x + o.dx > canvas.width-o.r || o.x + o.dx < o.r) {
-      o.dx = -o.dx;
-    };
-    if (o.y + o.dy > canvas.height-o.r || o.y + o.dy < o.r) {
-      o.dy = -o.dy;
     };
 
     bounceLogic(o);
