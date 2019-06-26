@@ -22,8 +22,10 @@ https://jyan95.github.io/spaceXcookiemonster/
 3. navigate to `/frontend` and run `npm install`, then `npm start` - it will prompt you to run on another port, hit `y`
 4. if it does not automatically open in your browser, navigate to http://localhost:3001
 
-## License
-This code is free to use under the terms of the MIT license.
-
 ### Contributors
 [guosamuel](https://github.com/guosamuel), [jyan95](https://github.com/jyan95)
+
+### License
+This code is free to use under the terms of the MIT license.
+
+
